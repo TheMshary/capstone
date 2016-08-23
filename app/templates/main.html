@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>who cares..</title>
+</head>
+<body>
+	
+	<hr>
+	<form action="/test/" method="POST">
+		{% csrf_token %}
+		<input type="text" name="value">
+		<input type="submit" value="submit">
+	</form>
+
+
+	<!-- IMAGE UPLOAD -->
+	<form action="/test_image/" method="POST" enctype="multipart/form-data">
+		<input type="hidden" name="csrfmiddlewaretoken" value="NYSV92iOly5kOBlKuJyc0M1S2p52yccV">
+		<input type="text" name="title" placeholder="Title">
+		<input type="text" name="description" placeholder="Description">
+		<input type="file" name="image">
+
+		<input type="submit" value="Upload">
+	</form>
+
+	<form action="/test_delete/" method="GET">
+		<!-- {% csrf_token %} -->
+		<input type="submit" value="Clear DB">
+		
+	</form>
+	{% if not user.is_authenticated %}
+		<!-- REGISTRATION -->
+		<form action="/rest-auth/registration/" method="POST">
+			{% csrf_token %}
+			<input type="text" name="username" placeholder="username">
+			<input type="email" name="email" placeholder="email">
+			<input type="password" name="password1" placeholder="password">
+			<input type="password" name="password2" placeholder="confirm password">
+
+			<input type="submit" value="Sign Up!">
+		</form>
+
+	
+		<!-- LOGIN -->
+		<form action="/login/" method="POST">
+			{% csrf_token %}
+			<input type="text" placeholder="Username" name="username">
+			<input type="password" placeholder="Password" name="password">
+
+			<input type="submit" value="Login">
+		</form>
+	{% else %}
+
+		<!-- REQUEST TOKEN -->
+		<form action="/token/" method="GET">
+			<input type="submit" value="Request Token">
+		</form>
+
+	{% endif %}
+	<!-- MULTIPLE IMAGE UPLOAD TEST -->
+	<form action="/predefinedservice/" method="POST">
+		{% csrf_token %}
+		<input type="text" name="title" placeholder="title">
+		<input type="text" name="description" placeholder="description">
+		<input type="text" name="price" placeholder="price">
+
+		<input type="file" name="image">
+
+		<input type="submit" name="Submit">
+	</form>
+</body>
+</html>
