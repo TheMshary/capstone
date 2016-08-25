@@ -4,5 +4,3 @@
 !.elasticbeanstalk/*.global.yml
 
 *.pyc
-project/*.pyc
-app/*.pyc
