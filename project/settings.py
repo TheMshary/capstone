@@ -138,32 +138,22 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
+DEBUG = True
+DATABASES = {
+	'default': {
+		'ENGINE': 'django.db.backends.mysql', 
+		'NAME': 'capstone', 
+		'USER': 'root', 
+		'PASSWORD': 'reapak', 
+		'HOST': 'localhost', 
+		'PORT': '',
+	}
+}
 
-if 'RDS_HOSTNAME' in os.environ:
-	# DEBUG = False
-	DEBUG = True
-	DATABASES = {
-		'default': {
-			'ENGINE': 'django.db.backends.mysql', 
-			'NAME': os.environ['RDS_DB_NAME'],
-			'USER': os.environ['RDS_USERNAME'],
-			'PASSWORD': os.environ['RDS_PASSWORD'],
-			'HOST': os.environ['RDS_HOSTNAME'],
-			'PORT': os.environ['RDS_PORT'],
-		}
-	}
-else:
-	DEBUG = True
-	DATABASES = {
-		'default': {
-			'ENGINE': 'django.db.backends.mysql', 
-			'NAME': 'capstone', 
-			'USER': 'root', 
-			'PASSWORD': 'reapak', 
-			'HOST': 'localhost', 
-			'PORT': '',
-		}
-	}
+try:
+	from local_settings import *
+except:
+	pass
 
 
 
