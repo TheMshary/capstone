@@ -136,7 +136,7 @@ class TokenRequest(APIView):
 		pp = pprint.PrettyPrinter(indent=4)
 		print "REQUEST.POST: "
 		pp.pprint(request.POST)
-		user = request.user
+		user = User.objects.get(username=request.POST.get("username", None), password=request.POST.get("password", None))
 		token = "NONE"
 		print "1"
 

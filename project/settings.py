@@ -151,9 +151,7 @@ DATABASES = {
 }
 
 try:
-	print "1"
 	from local_settings import *
-	print "2"
 except ImportError:
 	pass
 
