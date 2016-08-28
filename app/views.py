@@ -5,10 +5,9 @@ from django.template import RequestContext
 from django.shortcuts import render
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.models import AnonymousUser
 from django.utils.six import BytesIO
 
 #======================== REST FRAMEWORK IMPORTS ========================#
@@ -129,18 +128,28 @@ def logout_view(request):
 
 class TokenRequest(APIView):
 
-	authentication_classes = (BasicAuthentication,)
+	# authentication_classes = (BasicAuthentication,)
 	permission_classes = (permissions.AllowAny,)
 
 	def post(self, request):
 		pp = pprint.PrettyPrinter(indent=4)
-		print "REQUEST.POST: "
-		pp.pprint(request.POST)
-		user = User.objects.get(username=request.POST.get("username", None), password=request.POST.get("password", None))
+		# print "REQUEST.POST: "
+		# pp.pprint(request.POST)
+
+		data = JSONParser().parse(request)
+
+		username = data.get("username", None)
+		print "POST['username'] -> %s" % username
+		user = User.objects.get(username=username)
+
+		# user = request.user
 		token = "NONE"
 		print "1"
 
-		# if user.is_authenticated():
+		if user.is_anonymous():
+			return HttpResponse("You're Anonymous. You have no token.", status=status.HTTP_404_NOT_FOUND)
+
+
 		print "2"
 		try:
 			print "3"
@@ -164,9 +173,15 @@ class TokenRequest(APIView):
 @api_view(["POST"])
 # @csrf_exempt
 # @permission_classes((permissions.IsAuthenticated,))
-@authentication_classes((BasicAuthentication,))
+# @authentication_classes((BasicAuthentication,))
 def token_request(request):
-	user = request.user
+	# user = request.user
+	data = JSONParser().parse(request)
+
+	username = data.get("username", "weird shit happening")
+	print "POST['username'] -> %s" % username
+	user = User.objects.get(username=username)
+
 	token = "NONE"
 
 	# if user.is_authenticated():
