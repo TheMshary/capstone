@@ -128,7 +128,7 @@ def logout_view(request):
 
 class TokenRequest(APIView):
 
-	# authentication_classes = (BasicAuthentication,)
+	authentication_classes = (BasicAuthentication,)
 	permission_classes = (permissions.AllowAny,)
 
 	def post(self, request):
@@ -139,34 +139,20 @@ class TokenRequest(APIView):
 		data = JSONParser().parse(request)
 
 		username = data.get("username", None)
-		print "POST['username'] -> %s" % username
 		user = User.objects.get(username=username)
 
 		# user = request.user
 		token = "NONE"
-		print "1"
 
-		if user.is_anonymous():
-			return HttpResponse("You're Anonymous. You have no token.", status=status.HTTP_404_NOT_FOUND)
-
-
-		print "2"
 		try:
-			print "3"
-			print "USER: %s" % user
 			token = Token.objects.get(user=user)
-			print "4"
 			response_code = status.HTTP_200_OK
 		except Exception, e:
-			print "5"
 			response_code = status.HTTP_404_NOT_FOUND
 			token = "- Token not found for user"
-		# else:
-		# 	print "5"
-		# 	response_code = status.HTTP_401_UNAUTHORIZED
 		
-		print "6"
 		ret_string = "Token %s" % token
+		# login(user)
 		return HttpResponse(ret_string, status=response_code)
 
 
