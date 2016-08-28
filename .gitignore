@@ -4,4 +4,4 @@
 !.elasticbeanstalk/*.global.yml
 
 *.pyc
-local_settings
+project/local_settings.py

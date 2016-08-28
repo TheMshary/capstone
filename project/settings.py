@@ -152,7 +152,7 @@ DATABASES = {
 
 try:
 	from local_settings import *
-except:
+except ImportError:
 	pass
 
 
