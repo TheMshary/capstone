@@ -17,42 +17,19 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
-# from rest_framework.authtoken import views as token_views
+
 from app import views 
 
 urlpatterns = [
 	url(r'^admin/', admin.site.urls),
 
-	url(r'^predefinedservice/$', views.PredefinedServiceList.as_view()),
-	url(r'^predefinedservice/(?P<pk>[0-9]+)/$', views.PredefinedServiceDetail.as_view()),
+	url(r'^offeredservice/', views.OfferedServiceList.as_view()),
+	url(r'^offeredservice/(?P<pk>[0-9]+)/$', views.OfferedServiceDetail.as_view()),
 
-
-    # url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
-    url(r'^admin/', include(admin.site.urls)),
-
-	# url(r'^', include('django.contrib.auth.urls')),
-	# url(r'^accounts/', include('allauth.urls')),
-
-	# url(r'^rest-auth/', include('rest_auth.urls')),
-	# url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
-
-	# url(r'^api-token-auth/', token_views.obtain_auth_token),
+	url(r'^profile/$', views.Profile.as_view()),
 	
 	url(r'^signup/$', views.signup),
-	# url(r'^login/$', views.login_view),
 	url(r'^logout/$', views.logout_view),
-
-	url(r'^$', views.test),
-	url(r'^test_delete/', views.test_delete),
-	url(r'^api_test/', views.api_test),
-	url(r'^api_test_json/', views.api_test_json),
-
-	# url(r'^predefinedservice/$', views.predefinedservice),
-	url(r'^test_image/$', views.image_test),
-
-
-	url(r'^login/', views.TokenRequest.as_view()),
-	url(r'^token/', views.token_request),
-	url(r'^test', views.test),
+	url(r'^login/', views.token_request),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

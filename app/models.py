@@ -8,13 +8,11 @@ from django.conf import settings
 
 from rest_framework.authtoken.models import Token
 
+#TODO
+###TEST OUT EVERYTHING
+###SERVICE MODELS ARE DONE
+
 # Create your models here.
-
-# @receiver(post_save, sender=User)
-# def create_auth_token(sender, instance=None, created=False, **kwargs):
-#     if created:
-#         Token.objects.create(user=instance)
-
 
 # This is most likely a signal receiver that runs the function whenever a new User is created
 # It creates a new Token and associated it with the created User.
@@ -22,38 +20,80 @@ from rest_framework.authtoken.models import Token
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
+        Profile.objects.create(user=instance)
 
-class PredefinedService(models.Model):
+#============================= PROVIDER PROFILE ==============================#
+
+class Profile(models.Model):
+	user = models.OneToOneField(settings.AUTH_USER_MODEL)
+	# username = models.CharField(max_length=100)
+	about = models.TextField(null=True, blank=True)
+	phone_number = models.CharField(max_length=100, null=True, blank=True)
+	email = models.EmailField(null=True, blank=True)
+	image = models.ImageField(upload_to="providers", null=True, blank=True)
+
+	rating = models.FloatField(default=0.0)
+	country = models.CharField(max_length=100, null=True, blank=True)
+	area = models.CharField(max_length=100, null=True, blank=True)
+	street_address = models.CharField(max_length=100, null=True, blank=True)
+
+	def __str__(self):
+		return self.user.username
+
+#============================= BASE SERVICE MODEL ==============================#
+
+class Service(models.Model):
 	title = models.CharField(max_length=100, null=True, blank=True, default="untitled")
 	description = models.TextField(default="No description available.")
-	price = models.FloatField(default=0.000)
+	price = models.FloatField(default=0.0)
+	status = models.CharField(max_length=100, null=True, blank=True, default="pending")	#Make this into choices
+	due_date = models.DateTimeField()
+	created = models.DateTimeField(auto_now_add=True)
+	seekerpk = models.IntegerField()
+	providerpk = models.IntegerField()
 	# available Service Days/Hours (has default "any time")
+
+	is_special = models.BooleanField(default=False)
 
 	def __str__(self):
 		return "%s" % self.title
 
+#============================= SERVICE TYPES ==============================#
+
+class PublicService(models.Model):
+	service = models.OneToOneField(Service, null=True)
+	category = models.CharField(max_length=1337, default="other")
+
+	def __str__(self):
+		return self.service
+
+
+class OfferedService(models.Model):
+	service = models.OneToOneField(Service, null=True)
+	category = models.CharField(max_length=1337, default="other")
+
+	def __str__(self):
+		return self.service
+
+#============================= SUPPORT MODELS ==============================#
 
 class ServiceImage(models.Model):
-	# image = models.ImageField(upload_to="predefined", null=True)
+	# image = models.ImageField(upload_to="offered", null=True)
 	image = models.TextField(null=True)
 	name = models.CharField(max_length=9001, null=True)
-	predefinedservice = models.ForeignKey(PredefinedService, null=True)
+	service = models.ForeignKey(OfferedService, null=True)
 
 	def __str__(self):
 		return "%s" % self.name
 
 
-class ProviderProfile(models.Model):
-	user = models.OneToOneField(settings.AUTH_USER_MODEL)
-	image = models.ImageField(upload_to="providers", null=True)
-	username = models.CharField(max_length=100)
-	rating = models.FloatField()
-	bio = models.TextField()
-	phone_number = models.CharField(max_length=20)
-	email = models.EmailField()
-	address = models.CharField(max_length=100)
+class Bid(models.Model):
+	service = models.ForeignKey(PublicService)
+	bid = models.IntegerField(default=0.0)
 
 	def __str__(self):
-		return self.username
+		return self.bid
+
+
 
 

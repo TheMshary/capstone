@@ -6,7 +6,7 @@ letter_validator = RegexValidator(r'^[a-zA-Z]*$','Please Type Letters')
 
 
 
-class PredefinedServiceForm(forms.Form):  
+class OfferedServiceForm(forms.Form):  
 	title = forms.CharField(required=True)
 	description = forms.CharField(required=False, widget=forms.Textarea)
 	image = forms.ImageField(required=True)
