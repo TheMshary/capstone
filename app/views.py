@@ -23,18 +23,22 @@ from rest_framework.views import APIView
 
 #============================= APP IMPORTS ==============================#
 from app.forms import OfferedServiceForm, UserSignup, UserLogin
-from app.models import (OfferedService, 
-						Profile, 
-						PublicService, 
-						Bid, 
-						ServiceImage)
-from app.serializers import (OfferedServiceSerializer, 
-							 UserSerializer, 
-							 ProfileSerializer, 
-							 PublicServiceSerializer, 
-							 BidSerializer,
-							 ServiceImageSerializer,
-							 ServiceSerializer)
+from app.models import (
+	OfferedService, 
+	Profile, 
+	PublicService, 
+	Bid, 
+	ServiceImage,
+)
+from app.serializers import (
+	OfferedServiceSerializer, 
+	UserSerializer, 
+	ProfileSerializer, 
+	PublicServiceSerializer, 
+	BidSerializer,
+	ServiceImageSerializer,
+	ServiceSerializer,
+)
 
 
 # Create your views here.
