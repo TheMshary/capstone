@@ -40,6 +40,12 @@ from app.serializers import (
 	ServiceSerializer,
 )
 
+# TODO:
+## BidView doesn't authenticate
+## providerpk in OfferedServiceView isn't being automatically assigned
+## seekerpk in PublicServiceView isn't being automatically assigned
+## the __str__() of OfferedService doesn't work right
+
 
 # Create your views here.
 
@@ -133,7 +139,7 @@ class OfferedServiceView(APIView):
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_200_OK)
-		return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	@permission_classes((IsAuthenticated,))
 	def delete(self, request, pk):
@@ -246,6 +252,7 @@ class BidView(APIView):
 
 		return Response(serializer.data)
 
+	# This doesn't work. Authentication here doesn't work. No idea why.
 	def post(self, request, pk):
 
 		# service = PublicService.objects.get(pk=pk)
