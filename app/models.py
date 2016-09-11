@@ -73,7 +73,7 @@ class OfferedService(models.Model):
 	category = models.CharField(max_length=1337, default="other")
 
 	def __str__(self):
-		return "%s" % self.service.title
+		return "title"
 
 #============================= SUPPORT MODELS ==============================#
 
