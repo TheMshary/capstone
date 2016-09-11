@@ -244,7 +244,6 @@ class BidView(APIView):
 
 		return Response(serializer.data)
 
-	@permission_classes([IsAuthenticated])
 	def post(self, request, pk):
 
 		service = PublicService.objects.get(pk=pk)
