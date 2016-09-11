@@ -92,7 +92,7 @@ class Bid(models.Model):
 	bid = models.IntegerField(default=0.0)
 
 	def __str__(self):
-		return self.bid
+		return "%s" % self.bid
 
 
 
