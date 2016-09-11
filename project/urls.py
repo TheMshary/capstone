@@ -36,6 +36,8 @@ urlpatterns = [
 	url(r'^publicservice/$', views.PublicServiceView.as_view()),
 	url(r'^publicservice/(?P<pk>[0-9]+)/', views.PublicServiceView.as_view()),
 
+	# Might be unecessary since bids are being sent back along with the
+	## public services they're under in /publicservice/
 	# GET:	Loads all bids from a public service.
 	# POST:	Posts a bid on a public service.
 	# PUT:	Update existing bid.

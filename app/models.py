@@ -65,7 +65,7 @@ class PublicService(models.Model):
 	category = models.CharField(max_length=1337, default="other")
 
 	def __str__(self):
-		return self.service
+		return self.service.title
 
 
 class OfferedService(models.Model):
