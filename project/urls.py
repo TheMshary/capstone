@@ -23,10 +23,33 @@ from app import views
 urlpatterns = [
 	url(r'^admin/', admin.site.urls),
 
-	url(r'^offeredservice/', views.OfferedServiceList.as_view()),
-	url(r'^offeredservice/(?P<pk>[0-9]+)/$', views.OfferedServiceDetail.as_view()),
+	# GET:		Loads offered services along with all it's images.
+	# POST:		Posts an offered service.
+	# PUT:		Updates an existing offered service.
+	# DELETE:	Deletes offered service and it's images.
+	url(r'^offeredservice/$', views.OfferedServiceView.as_view()),
+	url(r'^offeredservice/(?P<pk>[0-9]+)/', views.OfferedServiceView.as_view()),
 
-	url(r'^profile/$', views.Profile.as_view()),
+	# GET:	Loads public services (with/without) their bids.
+	# POST:	Posts a public service.
+	# PUT:	Updates an existing public service.
+	url(r'^publicservice/$', views.PublicServiceView.as_view()),
+	url(r'^publicservice/(?P<pk>[0-9]+)/', views.PublicServiceView.as_view()),
+
+	# GET:	Loads all bids from a public service.
+	# POST:	Posts a bid on a public service.
+	# PUT:	Update existing bid.
+	url(r'^bid/(?P<pk>[0-9]+)/', views.BidView.as_view()),
+
+	# Unnecessary now, will be used later when saving actual image files
+	## only if it's more efficient to not load images in the offered
+	## list view, and only load them in the detail view
+	# GET:		Loads images of an offered service.
+	# POST:		Posts an images on an offered service.
+	# DELETE:	Deletes an image from an offered service.
+	url(r'^offeredimages/(?P<pk>[0-9]+)/', views.ServiceImagesView.as_view()),
+
+	url(r'^profile/$', views.ProfileView.as_view()),
 	
 	url(r'^signup/$', views.signup),
 	url(r'^logout/$', views.logout_view),

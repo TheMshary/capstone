@@ -47,10 +47,10 @@ class Service(models.Model):
 	description = models.TextField(default="No description available.")
 	price = models.FloatField(default=0.0)
 	status = models.CharField(max_length=100, null=True, blank=True, default="pending")	#Make this into choices
-	due_date = models.DateTimeField()
+	due_date = models.DateTimeField(null=True, blank=True)
 	created = models.DateTimeField(auto_now_add=True)
-	seekerpk = models.IntegerField()
-	providerpk = models.IntegerField()
+	seekerpk = models.IntegerField(null=True, blank=True)
+	providerpk = models.IntegerField(null=True, blank=True)
 	# available Service Days/Hours (has default "any time")
 
 	is_special = models.BooleanField(default=False)
@@ -73,7 +73,7 @@ class OfferedService(models.Model):
 	category = models.CharField(max_length=1337, default="other")
 
 	def __str__(self):
-		return self.service
+		return self.service.title
 
 #============================= SUPPORT MODELS ==============================#
 
