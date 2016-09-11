@@ -202,6 +202,14 @@ class PublicServiceView(APIView):
 			return Response(serializer.data, status=status.HTTP_200_OK)
 		return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
+	@permission_classes((IsAuthenticated,))
+	def delete(self, request, pk):
+		service = self._get_object(pk)
+		for bid in service.bid_set.all():
+			bid.delete()
+		service.delete()
+		return Response(serializer.errors, status=status.HTTP_200_OK)
+
 	def _get_object(self, pk):
 		try:
 			return PublicService.objects.get(pk=pk)
