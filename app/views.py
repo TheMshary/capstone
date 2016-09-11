@@ -141,7 +141,7 @@ class OfferedServiceView(APIView):
 		for image in service.serviceimage_set.all():
 			image.delete()
 		service.delete()
-		return Response(serializer.errors, status=status.HTTP_200_OK)
+		return Response(status=status.HTTP_200_OK)
 
 	def _get_object(self, pk):
 		try:
@@ -208,7 +208,7 @@ class PublicServiceView(APIView):
 		for bid in service.bid_set.all():
 			bid.delete()
 		service.delete()
-		return Response(serializer.errors, status=status.HTTP_200_OK)
+		return Response(status=status.HTTP_200_OK)
 
 	def _get_object(self, pk):
 		try:
