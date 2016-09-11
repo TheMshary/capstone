@@ -160,7 +160,7 @@ class PublicServiceView(APIView):
 	# permission_classes = (AllowAny,)
 
 	@permission_classes((AllowAny,))
-	def get(self, request, format=None):
+	def get(self, request, format=None): #pk=None?
 
 		# get the fucking token shitface
 
