@@ -214,7 +214,7 @@ class BidView(APIView):
 	List all Public Services, or create a new Public Service
 	"""
 	authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+	permission_classes = (IsAuthenticated,)
 	# permission_classes = (AllowAny,)
 
 	def get(self, request, pk):
