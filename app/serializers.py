@@ -36,7 +36,7 @@ class BidSerializer(serializers.ModelSerializer):
 		model = Bid
 		fields = '__all__'
 
-	
+
 
 	# def create(self, validated_data):
 	# 	servicepk = validated_data.get("service", None)
@@ -89,8 +89,8 @@ class OfferedServiceSerializer(serializers.ModelSerializer):
 
 
 class PublicServiceSerializer(serializers.ModelSerializer):
-	bid_set = BidSerializer(many=True)
-	service = ServiceSerializer()
+	bid_set = BidSerializer(required=False,many=True)
+	service = ServiceSerializer(required=False)
 
 	class Meta:
 		model = PublicService
