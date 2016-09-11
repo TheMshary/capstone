@@ -213,9 +213,8 @@ class BidView(APIView):
 	"""
 	List all Public Services, or create a new Public Service
 	"""
-
 	authentication_classes = (TokenAuthentication,)
-	permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
 	# permission_classes = (AllowAny,)
 
 	def get(self, request, pk):
@@ -236,7 +235,8 @@ class BidView(APIView):
 		serializer = BidSerializer(services, many=True)
 
 		return Response(serializer.data)
-		
+
+	@permission_classes((IsAuthenticated,))
 	def post(self, request, pk):
 
 		service = PublicService.objects.get(pk=pk)
