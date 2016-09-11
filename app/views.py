@@ -248,9 +248,9 @@ class BidView(APIView):
 
 	def post(self, request, pk):
 
-		service = PublicService.objects.get(pk=pk)
+		# service = PublicService.objects.get(pk=pk)
 		data = request.data
-		data.update({"service":service})
+		data.update({"service":pk})
 
 		serializer = BidSerializer(data=data)
 
