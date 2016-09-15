@@ -123,6 +123,7 @@ class ProfileSerializer(serializers.Serializer):
 	phone_number = serializers.CharField(required=False)
 	email = serializers.EmailField(required=False)
 	image = serializers.ImageField(required=False)
+	usertype = serializers.CharField(required=False)
 
 	rating = serializers.FloatField(required=False)
 	country = serializers.CharField(required=False)
@@ -134,6 +135,8 @@ class ProfileSerializer(serializers.Serializer):
 		instance.phone_number = validated_data.get("phone_number", instance.phone_number)
 		instance.email = validated_data.get("email", instance.email)
 		instance.image = validated_data.get("image", instance.image)
+		instance.usertype = validated_data.get("usertype", instance.usertype)
+		
 		instance.rating = validated_data.get("rating", instance.rating)
 		instance.country = validated_data.get("country", instance.country)
 		instance.area = validated_data.get("area", instance.area)

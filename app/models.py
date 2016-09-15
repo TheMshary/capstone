@@ -8,9 +8,6 @@ from django.conf import settings
 
 from rest_framework.authtoken.models import Token
 
-#TODO
-###TEST OUT EVERYTHING
-###SERVICE MODELS ARE DONE
 
 # Create your models here.
 
@@ -27,6 +24,7 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 class Profile(models.Model):
 	user = models.OneToOneField(settings.AUTH_USER_MODEL)
 	# username = models.CharField(max_length=100)
+	usertype = models.CharField(max_length=101, default="seeker") #Make this into choices
 	about = models.TextField(null=True, blank=True)
 	phone_number = models.CharField(max_length=100, null=True, blank=True)
 	email = models.EmailField(null=True, blank=True)

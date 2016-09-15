@@ -24,20 +24,21 @@ from rest_framework.views import APIView
 #============================= APP IMPORTS ==============================#
 from app.forms import OfferedServiceForm, UserSignup, UserLogin
 from app.models import (
-	OfferedService, 
 	Profile, 
+	Service,
 	PublicService, 
-	Bid, 
+	OfferedService, 
 	ServiceImage,
+	Bid, 
 )
 from app.serializers import (
-	OfferedServiceSerializer, 
 	UserSerializer, 
-	ProfileSerializer, 
-	PublicServiceSerializer, 
-	BidSerializer,
 	ServiceImageSerializer,
 	ServiceSerializer,
+	BidSerializer,
+	OfferedServiceSerializer, 
+	PublicServiceSerializer, 
+	ProfileSerializer, 
 )
 
 # TODO:
@@ -331,7 +332,7 @@ class ServiceImagesView(APIView):
 	def delete(self, request, pk):
 		image = self._get_object(pk)
 		image.delete()
-		return Response(serializer.errors, status=status.HTTP_200_OK)
+		return Response(status=status.HTTP_200_OK)
 
 	def _get_object(self, pk):
 		try:
@@ -340,6 +341,32 @@ class ServiceImagesView(APIView):
 			raise Http404
 
 
+class LogView(APIView):
+	"""
+	List all services with the logged in user, to show their log.
+	"""
+
+	def get(request):
+		user = request.user
+		query_last = request.GET.get('query_last', None)
+
+		# Hey you! Yes you, Mr. Refactor! Fix this monstrosity!
+		if user.profile.usertype == "seeker":
+			if query_last is not None:
+				services = Service.objects.filter(seekerpk=user.pk)[:query_last]
+			else:
+				services = Service.objects.filter(seekerpk=user.pk)
+		elif user.profile.usertype == "provider":
+			if query_last is not None:
+				services = Service.objects.filter(providerpk=user.pk)[:query_last]
+			else:
+				services = Service.objects.filter(providerpk=user.pk)
+		else:
+			return Response({"msg": "weird shit"}, status=status.HTTP_400_BAD_REQUEST)
+		
+		serializer = BidSerializer(services, many=True)
+
+		return Response(serializer.data, status=status.HTTP_200_OK)
 
 #============================ ACCOUNTS-RELATED ============================#
 @api_view(["POST"])
