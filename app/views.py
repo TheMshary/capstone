@@ -330,14 +330,17 @@ class ServiceImagesView(APIView):
 
 	@permission_classes((IsAuthenticated,))
 	def delete(self, request, pk):
-		image = self._get_object(pk)
+		try:
+			image = ServiceImage.objects.get(pk=pk)
+		except ServiceImage.DoesNotExist, e:
+			raise Http404
 		image.delete()
 		return Response(status=status.HTTP_200_OK)
 
 	def _get_object(self, pk):
 		try:
 			return ServiceImage.objects.get(pk=pk)
-		except PublicService.DoesNotExist, e:
+		except ServiceImage.DoesNotExist, e:
 			raise Http404
 
 
