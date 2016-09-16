@@ -29,6 +29,8 @@ class ServiceSerializer(serializers.ModelSerializer):
 		model = Service
 		fields = '__all__'
 
+	# Override the get() to include service type and category and shit??
+	# User this fucker -> "RelatedObjectDoesNotExist"
 
 class BidSerializer(serializers.ModelSerializer):
 

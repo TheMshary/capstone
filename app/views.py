@@ -357,9 +357,16 @@ class LogView(APIView):
 	"""
 
 	authentication_classes = (TokenAuthentication,)
-	permission_classes = (IsAuthenticated,)
+	permission_classes = (AllowAny,)
 
-	def get(request):
+	def get(self, request):
+		
+		services = Service.objects.filter(providerpk=4)
+
+		serializer = ServiceSerializer(services, many=True)
+
+		return Response(serializer.data, status=status.HTTP_200_OK)
+
 		user = request.user
 		query_last = request.GET.get('query_last', None)
 
@@ -377,7 +384,7 @@ class LogView(APIView):
 		else:
 			return Response({"msg": "'usertype' is neither seeker nor provider."}, status=status.HTTP_400_BAD_REQUEST)
 		
-		serializer = BidSerializer(services, many=True)
+		serializer = ServiceSerializer(services, many=True)
 
 		return Response(serializer.data, status=status.HTTP_200_OK)
 

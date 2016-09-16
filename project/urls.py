@@ -23,7 +23,8 @@ from app import views
 urlpatterns = [
 	url(r'^admin/', admin.site.urls),
 
-	url(r'^log/(?P<pk>[0-9]+)/', views.LogView.as_view()),
+	# url(r'^request/', views.RequestView.as_view()),
+	url(r'^log/', views.LogView.as_view()),
 
 	# GET:		Loads offered services along with all it's images.
 	# POST:		Posts an offered service.

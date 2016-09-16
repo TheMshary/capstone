@@ -57,7 +57,10 @@ class Service(models.Model):
 		return "%s" % self.title
 
 #============================= SERVICE TYPES ==============================#
+class fucktoy(models.Model):
+	hehe = models.CharField(max_length=1337)
 
+	
 class PublicService(models.Model):
 	service = models.OneToOneField(Service, null=True)
 	category = models.CharField(max_length=1337, default="other")
