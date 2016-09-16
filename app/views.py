@@ -123,13 +123,9 @@ class OfferedServiceView(APIView):
 	@permission_classes((IsAuthenticated,))
 	def post(self, request):
 
-		# pp = pprint.PrettyPrinter(indent=4)
-
 		providerpk = request.user.pk
-		data = request.data
-		data.get("service").update({"providerpk":providerpk})
-		# pp.pprint("DATA: %s" % data)
-		serializer = OfferedServiceSerializer(data=request.data)
+
+		serializer = OfferedServiceSerializer(data=request.data, context={"providerpk":providerpk})
 
 		# validate and save the serializer, and return the data back - 201 created
 		if serializer.is_valid():
@@ -195,9 +191,8 @@ class PublicServiceView(APIView):
 	def post(self, request):
 
 		seekerpk = request.user.pk
-		data = request.data
-		data.get("service").update({"seekerpk":seekerpk})
-		serializer = PublicServiceSerializer(data=request.data)
+		
+		serializer = PublicServiceSerializer(data=request.data, context={"seekerpk":seekerpk})
 
 		# validate and save the serializer, and return the data back - 201 created
 		if serializer.is_valid():

@@ -30,55 +30,37 @@ class ServiceSerializer(serializers.ModelSerializer):
 		model = Service
 		fields = '__all__'
 
-	# Override the get() to include service type and category and shit??
-	# User this fucker -> "RelatedObjectDoesNotExist" to check if there's a public service attached
-	# or if there's an offered service attached.
 	def to_representation(self, service):
 
-		servicedata = {
+		provider = User.objects.get(pk=service.providerpk)
+		seeker = User.objects.get(pk=service.seekerpk)
+		data = {
 			'title': service.title,
-			'description': service.description,
-			'price': service.price,
 			'status': service.status,
-			'due_date': service.due_date,
 			'created': service.created,
-			'seekerpk': service.seekerpk,
-			'providerpk': service.providerpk,
+			'due_date': service.due_date,
+			'provider': provider.username,
+			'seeker': seeker.username,
 		}
 
 		try:
 			offered = service.offeredservice
-			images = []
-
-			for image in offered.serviceimage_set:
-				images.append({
-					"name": image.name,
-					"image": image.image
-					})
-
-			data = {
-				"service": servicedata,
-				"category": offered.category,
-				"serviceimage_set": images
+			servicedata = {
+				"id": offered.pk,
+				"type": "offered",
 			}
 		except RelatedObjectDoesNotExist, e:
 			try:
 				public = service.publicservice
-				bids = []
-
-				for bid in public.bid_set:
-					bids.append({
-						"bid": bid.bid
-						})
-
-				data = {
-					"service": servicedata,
-					"category": public.category,
-					"bid_set": bids
+				
+				servicedata = {
+					"id": public.pk,
+					"type": "public",
 				}
 			except RelatedObjectDoesNotExist, e:
 				raise Http404
 
+		data.update(servicedata)
 		return data
 
 class BidSerializer(serializers.ModelSerializer):
