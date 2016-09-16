@@ -41,6 +41,13 @@ from app.serializers import (
 	ProfileSerializer, 
 )
 
+# TESTING:
+## 1) BidView authentication
+## 2) Automatic assignment of providerpk and seekerpk values
+## 3) The __str__() of OfferedService in the admin page
+## 4) Getting the log of the logged in user
+## 5) 
+
 # TODO:
 ## BidView doesn't authenticate
 ## providerpk in OfferedServiceView isn't being automatically assigned
