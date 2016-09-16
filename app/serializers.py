@@ -3,6 +3,7 @@ from base64 import b64decode
 
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
+from django.http import Http404
 
 from rest_framework import serializers
 
@@ -32,28 +33,53 @@ class ServiceSerializer(serializers.ModelSerializer):
 	# Override the get() to include service type and category and shit??
 	# User this fucker -> "RelatedObjectDoesNotExist" to check if there's a public service attached
 	# or if there's an offered service attached.
-	def to_representation(self, obj):
+	def to_representation(self, service):
 
-	title = models.CharField(max_length=100, null=True, blank=True, default="untitled")
-	description = models.TextField(default="No description available.")
-	price = models.FloatField(default=0.0)
-	status = models.CharField(max_length=100, null=True, blank=True, default="pending")	#Make this into choices
-	due_date = models.DateTimeField(null=True, blank=True)
-	created = models.DateTimeField(auto_now_add=True)
-	seekerpk = models.IntegerField(null=True, blank=True)
-	providerpk = models.IntegerField(null=True, blank=True)
-		data = {
-            'title': obj.title,
-            'description': obj.description,
-            'price': obj.price,
-            'status': obj.status,
-            'due_date': obj.due_date,
-            'created': obj.created,
-            'seekerpk': obj.seekerpk,
-            'providerpk': obj.providerpk,
-        }
+		servicedata = {
+			'title': service.title,
+			'description': service.description,
+			'price': service.price,
+			'status': service.status,
+			'due_date': service.due_date,
+			'created': service.created,
+			'seekerpk': service.seekerpk,
+			'providerpk': service.providerpk,
+		}
 
-        return data
+		try:
+			offered = service.offeredservice
+			images = []
+
+			for image in offered.serviceimage_set:
+				images.append({
+					"name": image.name,
+					"image": image.image
+					})
+
+			data = {
+				"service": servicedata,
+				"category": offered.category,
+				"serviceimage_set": images
+			}
+		except RelatedObjectDoesNotExist, e:
+			try:
+				public = service.publicservice
+				bids = []
+
+				for bid in public.bid_set:
+					bids.append({
+						"bid": bid.bid
+						})
+
+				data = {
+					"service": servicedata,
+					"category": public.category,
+					"bid_set": bids
+				}
+			except RelatedObjectDoesNotExist, e:
+				raise Http404
+
+		return data
 
 class BidSerializer(serializers.ModelSerializer):
 
