@@ -30,7 +30,30 @@ class ServiceSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 	# Override the get() to include service type and category and shit??
-	# User this fucker -> "RelatedObjectDoesNotExist"
+	# User this fucker -> "RelatedObjectDoesNotExist" to check if there's a public service attached
+	# or if there's an offered service attached.
+	def to_representation(self, obj):
+
+	title = models.CharField(max_length=100, null=True, blank=True, default="untitled")
+	description = models.TextField(default="No description available.")
+	price = models.FloatField(default=0.0)
+	status = models.CharField(max_length=100, null=True, blank=True, default="pending")	#Make this into choices
+	due_date = models.DateTimeField(null=True, blank=True)
+	created = models.DateTimeField(auto_now_add=True)
+	seekerpk = models.IntegerField(null=True, blank=True)
+	providerpk = models.IntegerField(null=True, blank=True)
+		data = {
+            'title': obj.title,
+            'description': obj.description,
+            'price': obj.price,
+            'status': obj.status,
+            'due_date': obj.due_date,
+            'created': obj.created,
+            'seekerpk': obj.seekerpk,
+            'providerpk': obj.providerpk,
+        }
+
+        return data
 
 class BidSerializer(serializers.ModelSerializer):
 

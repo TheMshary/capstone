@@ -367,6 +367,8 @@ class LogView(APIView):
 
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+
 		user = request.user
 		query_last = request.GET.get('query_last', None)
 
