@@ -116,12 +116,12 @@ class OfferedServiceView(APIView):
 	@permission_classes((IsAuthenticated,))
 	def post(self, request):
 
-		pp = pprint.PrettyPrinter(indent=4)
+		# pp = pprint.PrettyPrinter(indent=4)
 
 		providerpk = request.user.pk
 		data = request.data
 		data.get("service").update({"providerpk":providerpk})
-		pp.pprint("DATA: %s" % data)
+		# pp.pprint("DATA: %s" % data)
 		serializer = OfferedServiceSerializer(data=request.data)
 
 		# validate and save the serializer, and return the data back - 201 created
@@ -231,8 +231,8 @@ class BidView(APIView):
 	List all Public Services, or create a new Public Service
 	"""
 	authentication_classes = (TokenAuthentication,)
-	# permission_classes = (IsAuthenticated,)
-	permission_classes = (AllowAny,)
+	permission_classes = (IsAuthenticated,)
+	# permission_classes = (AllowAny,)
 
 	def get(self, request, pk):
 
@@ -349,6 +349,9 @@ class LogView(APIView):
 	List all services with the logged in user, to show their log.
 	"""
 
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
 	def get(request):
 		user = request.user
 		query_last = request.GET.get('query_last', None)
@@ -365,7 +368,7 @@ class LogView(APIView):
 			else:
 				services = Service.objects.filter(providerpk=user.pk)
 		else:
-			return Response({"msg": "weird shit"}, status=status.HTTP_400_BAD_REQUEST)
+			return Response({"msg": "'usertype' is neither seeker nor provider."}, status=status.HTTP_400_BAD_REQUEST)
 		
 		serializer = BidSerializer(services, many=True)
 
