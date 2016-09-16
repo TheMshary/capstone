@@ -35,6 +35,7 @@ from app.serializers import (
 	UserSerializer, 
 	ServiceImageSerializer,
 	ServiceSerializer,
+	ServiceLogSerializer,
 	BidSerializer,
 	OfferedServiceSerializer, 
 	PublicServiceSerializer, 
@@ -191,7 +192,7 @@ class PublicServiceView(APIView):
 	def post(self, request):
 
 		seekerpk = request.user.pk
-		
+
 		serializer = PublicServiceSerializer(data=request.data, context={"seekerpk":seekerpk})
 
 		# validate and save the serializer, and return the data back - 201 created
@@ -358,7 +359,7 @@ class LogView(APIView):
 		
 		services = Service.objects.filter(providerpk=4)
 
-		serializer = ServiceSerializer(services, many=True)
+		serializer = ServiceLogSerializer(services, many=True)
 
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -381,7 +382,7 @@ class LogView(APIView):
 		else:
 			return Response({"msg": "'usertype' is neither seeker nor provider."}, status=status.HTTP_400_BAD_REQUEST)
 		
-		serializer = ServiceSerializer(services, many=True)
+		serializer = ServiceLogSerializer(services, many=True)
 
 		return Response(serializer.data, status=status.HTTP_200_OK)
 

@@ -30,6 +30,12 @@ class ServiceSerializer(serializers.ModelSerializer):
 		model = Service
 		fields = '__all__'
 
+class ServiceLogSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = Service
+		fields = '__all__'
+		
 	def to_representation(self, service):
 
 		provider = User.objects.get(pk=service.providerpk)
