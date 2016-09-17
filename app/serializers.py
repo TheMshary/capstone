@@ -35,7 +35,7 @@ class ServiceLogSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Service
 		fields = '__all__'
-		
+
 	def to_representation(self, service):
 
 		provider = User.objects.get(pk=service.providerpk)
@@ -74,23 +74,6 @@ class BidSerializer(serializers.ModelSerializer):
 	class Meta():
 		model = Bid
 		fields = '__all__'
-
-
-
-	# def create(self, validated_data):
-	# 	servicepk = validated_data.get("service", None)
-	# 	service = Service.objects.get(pk=servicepk)
-
-	# 	bid = validated_data.get("bid", 0.0)
-	# 	instance = Bid.objects.create(service=service, bid=bid)
-
-	# 	return instance
-
-	# def update(self, instance, validated_data):
-	# 	instance.bid = validated_data.get("bid", instance.bid)
-	# 	instance.save()
-
-	# 	return instance
 
 
 class OfferedServiceSerializer(serializers.ModelSerializer):
