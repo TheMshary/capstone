@@ -100,10 +100,10 @@ class OfferedServiceView(APIView):
 	"""
 
 	authentication_classes = (TokenAuthentication,)
-	# permission_classes = (IsAuthenticated,)
+	permission_classes = (IsAuthenticated,)
 	# permission_classes = (AllowAny,)
 
-	@permission_classes((AllowAny,))
+	# @permission_classes((AllowAny,))
 	def get(self, request, format=None):
 
 		# get the fucking token shitface
@@ -121,7 +121,7 @@ class OfferedServiceView(APIView):
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-	@permission_classes((IsAuthenticated,))
+	# @permission_classes((IsAuthenticated,))
 	def post(self, request):
 
 		providerpk = request.user.pk
@@ -139,7 +139,7 @@ class OfferedServiceView(APIView):
 		# JSON is not in valid format, return errors - 400 bad request
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	@permission_classes((IsAuthenticated,))
+	# @permission_classes((IsAuthenticated,))
 	def put(self, request, pk):
 		service = self._get_object(pk)
 		serializer = OfferedServiceSerializer(service, data=request.data)
@@ -148,7 +148,7 @@ class OfferedServiceView(APIView):
 			return Response(serializer.data, status=status.HTTP_200_OK)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	@permission_classes((IsAuthenticated,))
+	# @permission_classes((IsAuthenticated,))
 	def delete(self, request, pk):
 		service = self._get_object(pk)
 		for image in service.serviceimage_set.all():
