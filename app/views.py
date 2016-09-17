@@ -132,9 +132,9 @@ class OfferedServiceView(APIView):
 		if serializer.is_valid():
 			serializer.save()
 
-			serializer.data.update({"provider pk": providerpk})
+			# serializer.data.update({"provider pk": providerpk})
 
-			return Response(serializer.data, status=status.HTTP_201_CREATED)
+			return Response({"provider pk": providerpk}, status=status.HTTP_201_CREATED)
 
 		# JSON is not in valid format, return errors - 400 bad request
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
