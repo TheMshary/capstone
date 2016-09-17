@@ -125,19 +125,18 @@ class OfferedServiceView(APIView):
 	def post(self, request):
 
 		providerpk = request.user.pk
-
-		serializer = OfferedServiceSerializer(data=request.data, context={"providerpk":providerpk})
+		data = request.data
+		data.get("service").update({"providerpk":providerpk})
+		serializer = OfferedServiceSerializer(data=data)
 
 		# validate and save the serializer, and return the data back - 201 created
 		if serializer.is_valid():
 			serializer.save()
 
-			# serializer.data.update({"provider pk": providerpk})
-
-			return Response({"provider pk": providerpk}, status=status.HTTP_201_CREATED)
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 		# JSON is not in valid format, return errors - 400 bad request
-		return Response({"stupid stuffs": "stoopid"}, status=status.HTTP_400_BAD_REQUEST)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	@permission_classes((IsAuthenticated,))
 	def put(self, request, pk):
