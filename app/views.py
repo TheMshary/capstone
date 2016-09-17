@@ -137,7 +137,7 @@ class OfferedServiceView(APIView):
 			return Response({"provider pk": providerpk}, status=status.HTTP_201_CREATED)
 
 		# JSON is not in valid format, return errors - 400 bad request
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		return Response({"stupid stuffs": "stoopid"}, status=status.HTTP_400_BAD_REQUEST)
 
 	@permission_classes((IsAuthenticated,))
 	def put(self, request, pk):
