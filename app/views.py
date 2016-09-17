@@ -58,6 +58,20 @@ from app.serializers import (
 
 # Create your views here.
 
+class PkTestView(APIView):
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	def post(self, request):
+		userpk = request.user.pk
+		userid = request.user.id 
+
+		data = {
+			"pk": userpk,
+			"id": userid
+		}
+		return Response(data)
+
 class ProfileView(APIView):
 	"""
 	Provider Profile stuff
