@@ -131,7 +131,8 @@ class OfferedServiceView(APIView):
 
 		# validate and save the serializer, and return the data back - 201 created
 		if serializer.is_valid():
-			serializer.save()
+			service = serializer.save()
+			service.service.providerpk = providerpk
 
 			return Response({"providerpkstuff":providerpk}, status=status.HTTP_201_CREATED)
 
