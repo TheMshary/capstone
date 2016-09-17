@@ -59,8 +59,8 @@ from app.serializers import (
 # Create your views here.
 
 class PkTestView(APIView):
-	authentication_classes = (TokenAuthentication,)
-	permission_classes = (IsAuthenticated,)
+	# authentication_classes = (TokenAuthentication,)
+	# permission_classes = (IsAuthenticated,)
 
 	def post(self, request):
 		userpk = request.user.pk
