@@ -41,15 +41,23 @@ class ServiceLogSerializer(serializers.ModelSerializer):
 		When using this serializer to serialize to JSON representation,
 		this function returns that JSON.
 		"""
-		provider = User.objects.get(pk=service.providerpk)
-		seeker = User.objects.get(pk=service.seekerpk)
+		try:
+			provider = User.objects.get(pk=service.providerpk).username
+		except User.DoesNotExist, e:
+			provider = None
+
+		try:
+			seeker = User.objects.get(pk=service.seekerpk).username
+		except User.DoesNotExist, e:
+			seeker = None
+
 		data = {
 			'title': service.title,
 			'status': service.status,
 			'created': service.created,
 			'due_date': service.due_date,
-			'provider': provider.username,
-			'seeker': seeker.username,
+			'provider': provider,
+			'seeker': seeker,
 		}
 
 		try:
