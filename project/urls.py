@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
 
+from rest_framework.authtoken import views as framework_views
+
 from app import views 
 
 urlpatterns = [
@@ -59,5 +61,6 @@ urlpatterns = [
 	url(r'^signup/$', views.signup),
 	url(r'^logout/$', views.logout_view),
 	url(r'^login/', views.token_request),
+	url(r'^api-token-auth/', framework_views.obtain_auth_token),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
