@@ -377,8 +377,8 @@ class LogView(APIView):
 		else:
 			return Response({"msg": "'usertype' is neither seeker nor provider."}, status=status.HTTP_400_BAD_REQUEST)
 		
-		# serializer = ServiceLogSerializer(services, many=True)
-		serializer = ServiceSerializer(services, many=True)
+		serializer = ServiceLogSerializer(services, many=True)
+		# serializer = ServiceSerializer(services, many=True)
 
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
