@@ -58,6 +58,25 @@ from app.serializers import (
 
 # Create your views here.
 
+class RequestView(APIView):
+	"""
+	View for requesting services
+	"""
+
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	def post(self, request, pk):
+		service = Service.objects.get(pk=pk)
+
+		service.seekerpk = request.user.pk
+		service.status = "pending"
+
+		# the force_insert=True forces .save() to create a new instance (force SQL insert).
+		service.save(force_insert=True)
+
+		return Response(status=status.HTTP_201_CREATED)
+
 class ProfileView(APIView):
 	"""
 	Provider Profile stuff

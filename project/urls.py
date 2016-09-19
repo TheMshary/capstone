@@ -25,7 +25,8 @@ from app import views
 urlpatterns = [
 	url(r'^admin/', admin.site.urls),
 
-	# url(r'^request/', views.RequestView.as_view()),
+	url(r'^request/(?P<pk>[0-9]+)/', views.RequestView.as_view()),
+	# GET:		Returns services associated with the logged in user.
 	url(r'^log/', views.LogView.as_view()),
 
 	# GET:		Loads offered services along with all it's images.
@@ -35,17 +36,17 @@ urlpatterns = [
 	url(r'^offeredservice/$', views.OfferedServiceView.as_view()),
 	url(r'^offeredservice/(?P<pk>[0-9]+)/', views.OfferedServiceView.as_view()),
 
-	# GET:	Loads public services (with/without) their bids.
-	# POST:	Posts a public service.
-	# PUT:	Updates an existing public service.
+	# GET:		Loads public services (with/without) their bids.
+	# POST:		Posts a public service.
+	# PUT:		Updates an existing public service.
 	url(r'^publicservice/$', views.PublicServiceView.as_view()),
 	url(r'^publicservice/(?P<pk>[0-9]+)/', views.PublicServiceView.as_view()),
 
 	# Might be unecessary since bids are being sent back along with the
 	## public services they're under in /publicservice/
-	# GET:	Loads all bids from a public service.
-	# POST:	Posts a bid on a public service.
-	# PUT:	Update existing bid.
+	# GET:		Loads all bids from a public service.
+	# POST:		Posts a bid on a public service.
+	# PUT:		Update existing bid.
 	url(r'^bid/(?P<pk>[0-9]+)/', views.BidView.as_view()),
 
 	# Unnecessary now, will be used later when saving actual image files
