@@ -66,7 +66,7 @@ class ServiceLogSerializer(serializers.ModelSerializer):
 				"id": offered.pk,
 				"type": "offered",
 			}
-		except RelatedObjectDoesNotExist, e:
+		except Service.RelatedObjectDoesNotExist, e:
 			try:
 				public = service.publicservice
 				
@@ -74,7 +74,7 @@ class ServiceLogSerializer(serializers.ModelSerializer):
 					"id": public.pk,
 					"type": "public",
 				}
-			except RelatedObjectDoesNotExist, e:
+			except Service.RelatedObjectDoesNotExist, e:
 				raise Http404
 
 		data.update(servicedata)
