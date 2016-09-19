@@ -23,12 +23,6 @@ from app import views
 urlpatterns = [
 	url(r'^admin/', admin.site.urls),
 
-
-
-	url(r'^pktest/', views.PkTestView.as_view()),
-
-
-
 	# url(r'^request/', views.RequestView.as_view()),
 	url(r'^log/', views.LogView.as_view()),
 

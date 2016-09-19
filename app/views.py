@@ -58,20 +58,6 @@ from app.serializers import (
 
 # Create your views here.
 
-class PkTestView(APIView):
-	authentication_classes = (TokenAuthentication,)
-	permission_classes = (IsAuthenticated,)
-
-	def post(self, request):
-		userpk = request.user.pk
-		userid = request.user.id 
-
-		data = {
-			"pk": userpk,
-			"id": userid
-		}
-		return Response(data)
-
 class ProfileView(APIView):
 	"""
 	Provider Profile stuff
@@ -146,9 +132,9 @@ class OfferedServiceView(APIView):
 		# validate and save the serializer, and return the data back - 201 created
 		if serializer.is_valid():
 			service = serializer.save()
-			service.service.providerpk = providerpk
+			# service.service.providerpk = providerpk
 
-			return Response({"providerpkstuff":providerpk}, status=status.HTTP_201_CREATED)
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 		# JSON is not in valid format, return errors - 400 bad request
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -208,8 +194,9 @@ class PublicServiceView(APIView):
 	def post(self, request):
 
 		seekerpk = request.user.pk
-
-		serializer = PublicServiceSerializer(data=request.data, context={"seekerpk":seekerpk})
+		data = request.data
+		data.get("service").update({"seekerpk":seekerpk})
+		serializer = PublicServiceSerializer(data=data)
 
 		# validate and save the serializer, and return the data back - 201 created
 		if serializer.is_valid():
@@ -449,36 +436,3 @@ def logout_view(request):
 	return HttpResponse("LOGGED OUT", status=status.HTTP_204_NO_CONTENT)
 
 
-
-
-
-#============================ SHIT WE MAY NEED ============================#
-
-# class OfferedServiceDetailView(APIView):
-# 	"""
-# 	Retrieve, Update, or Delete a Offered Service instance
-# 	"""
-# 	def _get_object(self, pk):
-# 		try:
-# 			print "GETTING PK-%s" % pk
-# 			return OfferedService.objects.get(pk=pk)
-# 		except OfferedService.DoesNotExist, e:
-# 			raise Http404
-
-# 	def get(self, request, pk):
-# 		service = self._get_object(pk)
-# 		serializer = OfferedServiceSerializer(service)
-# 		return Response(serializer.data)
-
-# 	def put(self, request, pk):
-# 		service = self._get_object(pk)
-# 		serializer = OfferedServiceSerializer(service, data=request.data)
-# 		if serializer.is_valid():
-# 			serializer.save()
-# 			return Response(serializer.data, status=status.HTTP_200_OK)
-# 		return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
-
-# 	def delete(self, request, pk):
-# 		service = self._get_object(pk)
-# 		service.delete()
-# 		return Response(status=HTTP_204_NO_CONTENT)

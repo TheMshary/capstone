@@ -37,7 +37,10 @@ class ServiceLogSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 	def to_representation(self, service):
-
+		"""
+		When using this serializer to serialize to JSON representation,
+		this function returns that JSON.
+		"""
 		provider = User.objects.get(pk=service.providerpk)
 		seeker = User.objects.get(pk=service.seekerpk)
 		data = {
