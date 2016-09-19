@@ -356,7 +356,7 @@ class LogView(APIView):
 	"""
 
 	authentication_classes = (TokenAuthentication,)
-	permission_classes = (AllowAny,)
+	permission_classes = (IsAuthenticated,)
 
 	def get(self, request):
 
