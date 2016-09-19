@@ -3,6 +3,7 @@ from base64 import b64decode
 
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
+from django.core.exceptions import RelatedObjectDoesNotExist
 from django.http import Http404
 
 from rest_framework import serializers
@@ -66,7 +67,7 @@ class ServiceLogSerializer(serializers.ModelSerializer):
 				"id": offered.pk,
 				"type": "offered",
 			}
-		except Service.RelatedObjectDoesNotExist, e:
+		except RelatedObjectDoesNotExist, e:
 			try:
 				public = service.publicservice
 				
@@ -74,7 +75,7 @@ class ServiceLogSerializer(serializers.ModelSerializer):
 					"id": public.pk,
 					"type": "public",
 				}
-			except Service.RelatedObjectDoesNotExist, e:
+			except RelatedObjectDoesNotExist, e:
 				raise Http404
 
 		data.update(servicedata)
