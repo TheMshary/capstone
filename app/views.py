@@ -359,14 +359,6 @@ class LogView(APIView):
 	permission_classes = (AllowAny,)
 
 	def get(self, request):
-		
-		services = Service.objects.filter(providerpk=4)
-
-		serializer = ServiceLogSerializer(services, many=True)
-
-		return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 
 		user = request.user
 		query_last = request.GET.get('query_last', None)
