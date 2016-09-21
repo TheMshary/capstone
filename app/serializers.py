@@ -1,12 +1,16 @@
+#============================= CORE IMPORTS =============================#
 import pprint
 from base64 import b64decode
 
+#============================ DJANGO IMPORTS ============================#
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.http import Http404
 
+#======================== REST FRAMEWORK IMPORTS ========================#
 from rest_framework import serializers
 
+#============================= APP IMPORTS ==============================#
 from app.models import OfferedService, ServiceImage, Profile, Service, Bid, PublicService
 
 
@@ -14,7 +18,6 @@ class UserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = User
 		fields = ('username', 'password')
-		# write_only_fields = ('password',)
 
 
 class ServiceImageSerializer(serializers.ModelSerializer):
@@ -30,17 +33,15 @@ class ServiceSerializer(serializers.ModelSerializer):
 		model = Service
 		fields = '__all__'
 
-class ServiceLogSerializer(serializers.ModelSerializer):
 
-	class Meta:
-		model = Service
-		fields = '__all__'
+class ServiceLogSerializer(serializers.Serializer):
 
 	def to_representation(self, service):
 		"""
 		When using this serializer to serialize to JSON representation,
 		this function returns that JSON.
 		"""
+
 		try:
 			provider = User.objects.get(pk=service.providerpk).username
 		except User.DoesNotExist, e:
@@ -74,7 +75,7 @@ class ServiceLogSerializer(serializers.ModelSerializer):
 					"id": public.pk,
 					"type": "public",
 				}
-			except PublicService.RelatedObjectDoesNotExist, e:
+			except PublicService.DoesNotExist, e:
 				raise Http404
 
 		data.update(servicedata)

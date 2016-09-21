@@ -1,4 +1,6 @@
+#============================= CORE IMPORTS =============================#
 import pprint
+
 #============================ DJANGO IMPORTS ============================#
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -44,7 +46,11 @@ from app.serializers import (
 
 # Create your views here.
 
+
+##############################
 ########## UNTESTED ##########
+######## UNREFACTORED ########
+##############################
 class AcceptBidView(APIView):
 	"""
 	Seeker declining a bid
@@ -77,7 +83,10 @@ class AcceptBidView(APIView):
 		return Response(status=status.HTTP_200_OK)
 
 
+##############################
 ########## UNTESTED ##########
+######## UNREFACTORED ########
+##############################
 class DeclineBidView(APIView):
 	"""
 	Seeker declining a bid
@@ -94,8 +103,10 @@ class DeclineBidView(APIView):
 
 		return Response(status=status.HTTP_200_OK)
 
-
+##############################
 ########## UNTESTED ##########
+######## UNREFACTORED ########
+##############################
 class ProviderDoneView(APIView):
 	"""
 	Provider "Dones" the service they're working on
@@ -111,7 +122,10 @@ class ProviderDoneView(APIView):
 
 		return Response(status=status.HTTP_201_CREATED)
 
+##############################
 ########## UNTESTED ##########
+######## UNREFACTORED ########
+##############################
 class ProviderResponseView(APIView):
 	"""
 	Provider can accept or decline a request for an Offered Service
@@ -135,7 +149,10 @@ class ProviderResponseView(APIView):
 
 		return Response(status=status.HTTP_201_CREATED)
 
+##############################
 ########## UNTESTED ##########
+######## UNREFACTORED ########
+##############################
 class RequestView(APIView):
 	"""
 	View for requesting services
@@ -164,69 +181,45 @@ class ProfileView(APIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
-	def get(self, request, format=None):
+	def get(self, request):
 		user = request.user
 		profile = user.profile
-
 		serializer = ProfileSerializer(profile)
-
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
-	def put(self, request, format=None):
+	def put(self, request):
 		profile = request.user.profile
-
-		serializer = ProfileSerializer(profile, data=request.data)
-
+		data = request.data
+		serializer = ProfileSerializer(profile, data=data)
 		if serializer.is_valid():
 			serializer.save()
-
 			return Response(serializer.data, status=status.HTTP_200_OK)
-
-		# invalid JSON format
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class OfferedServiceView(APIView):
 	"""
-	List all Offered Services, or create a new Offered Service
+	Offered Service listing (ordered by date created), creation, updating, and deletion.
 	"""
 
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
 	@permission_classes((AllowAny,))
-	def get(self, request, format=None):
-
-		# get the fucking token shitface
-
-
+	def get(self, request):
 		query_last = request.GET.get('query_last', None)
-
-		if query_last is not None:
-			services = OfferedService.objects.all()[:query_last]
-		else:
-			services = OfferedService.objects.all()
-		
+		services = OfferedService.objects.all()[:query_last].order_by(created)
 		serializer = OfferedServiceSerializer(services, many=True)
-
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 	def post(self, request):
-
 		providerpk = request.user.pk
 		data = request.data
-		data.get("service").update({"providerpk":providerpk})
-		serializer = OfferedServiceSerializer(data=data)
-
-		# validate and save the serializer, and return the data back - 201 created
+		serializer = OfferedServiceSerializer(data=data, context={"service":{"providerpk":providerpk}})
 		if serializer.is_valid():
-			service = serializer.save()
-			# service.service.providerpk = providerpk
-
+			serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-		# JSON is not in valid format, return errors - 400 bad request
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	def put(self, request, pk):
@@ -254,48 +247,28 @@ class OfferedServiceView(APIView):
 
 class PublicServiceView(APIView):
 	"""
-	List all Public Services, or create a new Public Service
+	Public Service listing (ordered by date created), creation, updating, and deletion.
 	"""
 
 	authentication_classes = (TokenAuthentication,)
-	# permission_classes = (IsAuthenticated,)
-	# permission_classes = (AllowAny,)
+	permission_classes = (IsAuthenticated,)
 
 	@permission_classes((AllowAny,))
-	def get(self, request, format=None): #pk=None?
-
-		# get the fucking token shitface
-
-
+	def get(self, request):
 		query_last = request.GET.get('query_last', None)
-
-		if query_last is not None:
-			services = PublicService.objects.all()[:query_last] #order_by=service.created ??
-		else:
-			services = PublicService.objects.all()
-		
+		services = PublicService.objects.all()[:query_last].order_by(created)
 		serializer = PublicServiceSerializer(services, many=True)
-
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
-	@permission_classes((IsAuthenticated,))
 	def post(self, request):
-
 		seekerpk = request.user.pk
 		data = request.data
-		data.get("service").update({"seekerpk":seekerpk})
-		serializer = PublicServiceSerializer(data=data)
-
-		# validate and save the serializer, and return the data back - 201 created
+		serializer = PublicServiceSerializer(data=data, context={"service": {"seekerpk":seekerpk}})
 		if serializer.is_valid():
 			serializer.save()
-
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-		# JSON is not in valid format, return errors - 400 bad request
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	@permission_classes((IsAuthenticated,))
 	def put(self, request, pk):
 		service = self._get_object(pk)
 		serializer = PublicServiceSerializer(service, data=request.data)
@@ -304,7 +277,6 @@ class PublicServiceView(APIView):
 			return Response(serializer.data, status=status.HTTP_200_OK)
 		return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
-	@permission_classes((IsAuthenticated,))
 	def delete(self, request, pk):
 		service = self._get_object(pk)
 		for bid in service.bid_set.all():
@@ -322,47 +294,25 @@ class PublicServiceView(APIView):
 
 class BidView(APIView):
 	"""
-	List all Public Services, or create a new Public Service
+	Bid retrieval based on Public Service, creation, updating, and deletion.
 	"""
+
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
-	# permission_classes = (AllowAny,)
 
 	def get(self, request, pk):
-
-		# get the fucking token shitface
-
-
 		query_last = request.GET.get('query_last', None)
-
 		service = PublicService.objects.get(pk=pk)
-
-
-		if query_last is not None:
-			bid = Bid.objects.all(service=service)[:query_last]
-		else:
-			bid = Bid.objects.all(service=service)
-		
+		bid = Bid.objects.all(service=service)[:query_last]
 		serializer = BidSerializer(services, many=True)
+		return Response(serializer.data, status=status.HTTP_200_OK)
 
-		return Response(serializer.data)
-
-	# This doesn't work. Authentication here doesn't work. No idea why.
 	def post(self, request, pk):
-
-		# service = PublicService.objects.get(pk=pk)
 		data = request.data
-		data.update({"service":pk})
-
-		serializer = BidSerializer(data=data)
-
-		# validate and save the serializer, and return the data back - 201 created
+		serializer = BidSerializer(data=data, context={"service":pk})
 		if serializer.is_valid():
 			serializer.save()
-
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-		# JSON is not in valid format, return errors - 400 bad request
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	def put(self, request, pk):
@@ -373,95 +323,78 @@ class BidView(APIView):
 			return Response(serializer.data, status=status.HTTP_200_OK)
 		return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
+	def delete(self, request, pk):
+		bid = self._get_object(pk)
+		bid.delete()
+		return Response(status=status.HTTP_200_OK)
+
 	def _get_object(self, pk):
 		try:
-			service = PublicService.objects.get(pk=pk)
-			return Bid.objects.get(service=service)
+			return Bid.objects.get(pk=pk)
 		except PublicService.DoesNotExist, e:
 			raise Http404
 
 
 class ServiceImagesView(APIView):
 	"""
-	List all Public Services, or create a new Public Service
+	Offered Service Images listing, creation, and deletion.
 	"""
 
 	authentication_classes = (TokenAuthentication,)
-	# permission_classes = (IsAuthenticated,)
-	# permission_classes = (AllowAny,)
+	permission_classes = (IsAuthenticated,)
 
 	@permission_classes((AllowAny,))
 	def get(self, request, pk):
-
-		# get the fucking token shitface
-
-
-		service = OfferedService.objects.get(pk=pk)
-
+		service = self._get_service_object(pk)
 		images = ServiceImage.objects.all(service=service)
-		
 		serializer = ServiceImageSerializer(images, many=True)
-
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
-	@permission_classes((IsAuthenticated,))
 	def post(self, request, pk):
-
-		service = OfferedService.objects.get(pk=pk)
+		service = self._get_service_object(pk)
 		data = request.data
-		data.update({"service":service})
-
-		serializer = ServiceImageSerializer(data=data)
-
-		# validate and save the serializer, and return the data back - 201 created
+		serializer = ServiceImageSerializer(data=data, context={"service":service})
 		if serializer.is_valid():
 			serializer.save()
-
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-		# JSON is not in valid format, return errors - 400 bad request
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	@permission_classes((IsAuthenticated,))
 	def delete(self, request, pk):
-		try:
-			image = ServiceImage.objects.get(pk=pk)
-		except ServiceImage.DoesNotExist, e:
-			raise Http404
+		image = self._get_image_object(pk)
 		image.delete()
 		return Response(status=status.HTTP_200_OK)
 
-	def _get_object(self, pk):
+	def _get_image_object(self, pk):
 		try:
 			return ServiceImage.objects.get(pk=pk)
 		except ServiceImage.DoesNotExist, e:
 			raise Http404
 
+	def _get_service_object(self, pk):
+		try:
+			return OfferedService.objects.get(pk=pk)
+		except OfferedService.DoesNotExist, e:
+			raise Http404
 
+##############################
+########## UNTESTED ##########
+##############################
 class LogView(APIView):
 	"""
-	List all services with the logged in user, to show their log.
+	Service Log listing of the logged in user.
 	"""
 
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
 	def get(self, request):
-
 		user = request.user
 		query_last = request.GET.get('query_last', None)
-
-		# Hey you! Yes you, Mr. Refactor! Fix this monstrosity!
-		if user.profile.usertype == "seeker":
-			if query_last is not None:
-				services = Service.objects.filter(seekerpk=user.pk)[:query_last]
-			else:
-				services = Service.objects.filter(seekerpk=user.pk)
-		elif user.profile.usertype == "provider":
-			if query_last is not None:
-				services = Service.objects.filter(providerpk=user.pk)[:query_last]
-			else:
-				services = Service.objects.filter(providerpk=user.pk)
+		usertype = user.profile.usertype
+		if usertype == "seeker":
+			services = Service.objects.filter(seekerpk=user.pk)[:query_last]
+		elif usertype == "provider":
+			services = Service.objects.filter(providerpk=user.pk)[:query_last]
 		else:
 			return Response({"msg": "'usertype' is neither seeker nor provider."}, status=status.HTTP_400_BAD_REQUEST)
 		
@@ -481,19 +414,16 @@ def token_request(request):
 	token = "NONE"
 	try:
 		token = Token.objects.get(user=user)
-		response_code = status.HTTP_200_OK
-	except Exception, e:
-		response_code = status.HTTP_404_NOT_FOUND
-		token = "- Token not found for user"
+	except Token.DoesNotExist, e:
+		raise Http404
 	
 	ret_string = "Token %s" % token
-	return HttpResponse(ret_string, status=response_code)
+	return HttpResponse(ret_string, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @csrf_exempt
 @permission_classes((AllowAny,))
 def signup(request):
-
 	try:
 		User.objects.get(username=request.data.get("username"))
 		return HttpResponse("Username taken.", status=status.HTTP_400_BAD_REQUEST)
@@ -501,13 +431,10 @@ def signup(request):
 		pass
 
 	serializer = UserSerializer(data=request.data)
-
 	if serializer.is_valid():
 		serializer.save()
-
 		return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-	return HttpResponse("Invalid.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+	return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])

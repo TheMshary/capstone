@@ -25,6 +25,7 @@ from app import views
 urlpatterns = [
 	url(r'^admin/', admin.site.urls),
 
+	# UNTESTED
 	url(r'^declinebid/(?P<pk>[0-9]+)/', views.DeclineBidView.as_view()),
 	url(r'^providerdone/(?P<pk>[0-9]+)/', views.ProviderDoneView.as_view()),
 	url(r'^providerresponse/(?P<pk>[0-9]+)/', views.ProviderResponseView.as_view()),
@@ -61,11 +62,15 @@ urlpatterns = [
 	# DELETE:	Deletes an image from an offered service.
 	url(r'^offeredimages/(?P<pk>[0-9]+)/', views.ServiceImagesView.as_view()),
 
+	# GET:		Loads profile info of the logged in user
+	# PUT:		Updates profile info of the logged in user
 	url(r'^profile/$', views.ProfileView.as_view()),
 	
+	# Accounts stuff
 	url(r'^signup/$', views.signup),
 	url(r'^logout/$', views.logout_view),
 	url(r'^login/', views.token_request),
+	# Authenticating login
 	url(r'^api-token-auth/', framework_views.obtain_auth_token),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

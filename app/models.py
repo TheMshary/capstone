@@ -1,18 +1,21 @@
+#============================= CORE IMPORTS =============================#
 from __future__ import unicode_literals
 
+#============================ DJANGO IMPORTS ============================#
 from django.db import models
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 from django.conf import settings
 
+#======================== REST FRAMEWORK IMPORTS ========================#
 from rest_framework.authtoken.models import Token
 
 
 # Create your models here.
 
 # This is most likely a signal receiver that runs the function whenever a new User is created
-# It creates a new Token and associated it with the created User.
+# It creates a new Token and Profile and associated it with the created User.
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
