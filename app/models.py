@@ -88,6 +88,7 @@ class ServiceImage(models.Model):
 class Bid(models.Model):
 	service = models.ForeignKey(PublicService)
 	bid = models.IntegerField(default=0.0)
+	status = models.CharField(max_length=101, default="pending") #Make this into choices
 
 	def __str__(self):
 		return "%s" % self.bid

@@ -42,22 +42,100 @@ from app.serializers import (
 	ProfileSerializer, 
 )
 
-# TESTING:
-## 1) BidView authentication
-## 2) Automatic assignment of providerpk and seekerpk values
-## 3) The __str__() of OfferedService in the admin page
-## 4) Getting the log of the logged in user
-## 5) 
-
-# TODO:
-## BidView doesn't authenticate
-## providerpk in OfferedServiceView isn't being automatically assigned
-## seekerpk in PublicServiceView isn't being automatically assigned
-## the __str__() of OfferedService doesn't work right
-
-
 # Create your views here.
 
+########## UNTESTED ##########
+class AcceptBidView(APIView):
+	"""
+	Seeker declining a bid
+	"""
+
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	def post(self, request, pk):
+		bid = Bid.objects.get(pk=pk)
+
+		service = bid.service
+		otherbids = service.bid_set.all()
+
+		# decline all other bids
+		for otherbid in otherbids:
+			otherbid.status = "declined"
+			otherbid.save()
+		
+		# accept this bid
+		bid.status = "accepted"
+		bid.save()
+
+		# update service's price and status
+		service.price = bid.bid
+		service.status = "active"
+		service.save()
+
+
+		return Response(status=status.HTTP_200_OK)
+
+
+########## UNTESTED ##########
+class DeclineBidView(APIView):
+	"""
+	Seeker declining a bid
+	"""
+
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	def post(self, request, pk):
+		bid = Bid.objects.get(pk=pk)
+
+		bid.status = "declined"
+		bid.save()
+
+		return Response(status=status.HTTP_200_OK)
+
+
+########## UNTESTED ##########
+class ProviderDoneView(APIView):
+	"""
+	Provider "Dones" the service they're working on
+	"""
+
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	def post(self, request, pk):
+		service = Service.objects.get(pk=pk)
+		service.status = "Done"
+		service.save()
+
+		return Response(status=status.HTTP_201_CREATED)
+
+########## UNTESTED ##########
+class ProviderResponseView(APIView):
+	"""
+	Provider can accept or decline a request for an Offered Service
+	"""
+
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	def post(self, request, pk):
+		service = Service.objects.get(pk=pk)
+		response = request.data.get("response")
+
+		if response == "accept":
+			service.status = "Active"
+		elif response == "decline":	
+			service.status = "Declined"
+		else:
+			return Response({"msg": "Correct your spelling Ali!"}, status=status.HTTP_400_BAD_REQUEST)
+
+		service.save()
+
+		return Response(status=status.HTTP_201_CREATED)
+
+########## UNTESTED ##########
 class RequestView(APIView):
 	"""
 	View for requesting services
@@ -77,9 +155,10 @@ class RequestView(APIView):
 
 		return Response(status=status.HTTP_201_CREATED)
 
+
 class ProfileView(APIView):
 	"""
-	Provider Profile stuff
+	Provider Profile retrieval and updating.
 	"""
 
 	authentication_classes = (TokenAuthentication,)
@@ -88,28 +167,22 @@ class ProfileView(APIView):
 	def get(self, request, format=None):
 		user = request.user
 		profile = user.profile
-		# serialize profile
+
 		serializer = ProfileSerializer(profile)
-		# return serialized data
+
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
 	def put(self, request, format=None):
-		# parse the request into JSON. Required?
-		# data = JSONParser().parse(request)
+		profile = request.user.profile
 
-		user = request.user
-		profile = user.profile
-
-		# serialize the JSON
 		serializer = ProfileSerializer(profile, data=request.data)
 
-		# validate and save the serializer, and return the data back - 201 created
 		if serializer.is_valid():
 			serializer.save()
 
 			return Response(serializer.data, status=status.HTTP_200_OK)
 
-		# JSON is not in valid format, return errors - 400 bad request
+		# invalid JSON format
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -119,8 +192,7 @@ class OfferedServiceView(APIView):
 	"""
 
 	authentication_classes = (TokenAuthentication,)
-	# permission_classes = (IsAuthenticated,)
-	# permission_classes = (AllowAny,)
+	permission_classes = (IsAuthenticated,)
 
 	@permission_classes((AllowAny,))
 	def get(self, request, format=None):
@@ -140,7 +212,6 @@ class OfferedServiceView(APIView):
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-	@permission_classes((IsAuthenticated,))
 	def post(self, request):
 
 		providerpk = request.user.pk
@@ -158,7 +229,6 @@ class OfferedServiceView(APIView):
 		# JSON is not in valid format, return errors - 400 bad request
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	@permission_classes((IsAuthenticated,))
 	def put(self, request, pk):
 		service = self._get_object(pk)
 		serializer = OfferedServiceSerializer(service, data=request.data)
@@ -167,7 +237,6 @@ class OfferedServiceView(APIView):
 			return Response(serializer.data, status=status.HTTP_200_OK)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	@permission_classes((IsAuthenticated,))
 	def delete(self, request, pk):
 		service = self._get_object(pk)
 		for image in service.serviceimage_set.all():
