@@ -105,7 +105,7 @@ class Service(models.Model):
 
 class PublicService(models.Model):
 	service = models.OneToOneField(Service, null=True)
-	category = models.CharField(max_length=1337, default="other")
+	category = models.CharField(max_length=1337, default="other") #Make this into choices.
 
 	def __str__(self):
 		return self.service.title
@@ -113,7 +113,7 @@ class PublicService(models.Model):
 
 class OfferedService(models.Model):
 	service = models.OneToOneField(Service, null=True)
-	category = models.CharField(max_length=1337, default="other")
+	category = models.CharField(max_length=1337, default="other") #Make this into choices.
 
 	def __str__(self):
 		return self.service.title
@@ -121,8 +121,8 @@ class OfferedService(models.Model):
 #============================= SUPPORT MODELS ==============================#
 
 class ServiceImage(models.Model):
-	# image = models.ImageField(upload_to="offered", null=True)
-	image = models.TextField(null=True)
+	image = models.ImageField(upload_to="offered", null=True)
+	# image = models.TextField(null=True)
 	name = models.CharField(max_length=9001, null=True)
 	service = models.ForeignKey(OfferedService, null=True)
 

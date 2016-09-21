@@ -21,11 +21,23 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ServiceImageSerializer(serializers.ModelSerializer):
+	image = serializers.CharField()
+
+	def create(self, validated_data):
+		filename = validated_data.get("name")
+		b64_text = validated_data.get("image")
+
+		image_data = b64decode(b64_text)
+		contentfile = ContentFile(image_data, filename)
+
+		image_instance = ServiceImage.objects.create(image=contentfile, name=filename)
+
+		return image_instance
+
 
 	class Meta:
 		model = ServiceImage
-		fields = '__all__'
-
+		fields = ('image', 'name')
 
 class ServiceSerializer(serializers.ModelSerializer):
 
@@ -104,7 +116,11 @@ class OfferedServiceSerializer(serializers.ModelSerializer):
 		offeredservice = OfferedService.objects.create(service=service, **validated_data)
 
 		for image_data in images_data:
-			ServiceImage.objects.create(service=offeredservice, **image_data)
+			serializer = ServiceImageSerializer(data=image_data)
+			if serializer.is_valid():
+				image_instance = serializer.save()
+				image_instance.service = offeredservice
+				image_instance.save()
 			
 		return offeredservice
 
