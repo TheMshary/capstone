@@ -2,15 +2,12 @@
 import pprint
 
 #============================ DJANGO IMPORTS ============================#
-from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.shortcuts import render
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.contrib.auth.models import User, AnonymousUser
-from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse, Http404
+from django.contrib.auth.models import User
+from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.six import BytesIO
 
 #======================== REST FRAMEWORK IMPORTS ========================#
 from rest_framework import status
@@ -19,8 +16,6 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.authtoken.models import Token
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 
 #============================= APP IMPORTS ==============================#
@@ -203,7 +198,7 @@ class OfferedServiceView(APIView):
 	"""
 
 	authentication_classes = (TokenAuthentication,)
-	permission_classes = (IsAuthenticated,)
+	# permission_classes = (IsAuthenticated,)
 
 	@permission_classes((AllowAny,))
 	def get(self, request):
@@ -213,6 +208,7 @@ class OfferedServiceView(APIView):
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+	@permission_classes((IsAuthenticated,))
 	def post(self, request):
 		providerpk = request.user.pk
 		data = request.data
@@ -222,6 +218,7 @@ class OfferedServiceView(APIView):
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+	@permission_classes((IsAuthenticated,))
 	def put(self, request, pk):
 		service = self._get_object(pk)
 		serializer = OfferedServiceSerializer(service, data=request.data)
@@ -230,6 +227,7 @@ class OfferedServiceView(APIView):
 			return Response(serializer.data, status=status.HTTP_200_OK)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+	@permission_classes((IsAuthenticated,))
 	def delete(self, request, pk):
 		service = self._get_object(pk)
 		for image in service.serviceimage_set.all():
@@ -251,7 +249,7 @@ class PublicServiceView(APIView):
 	"""
 
 	authentication_classes = (TokenAuthentication,)
-	permission_classes = (IsAuthenticated,)
+	# permission_classes = (IsAuthenticated,)
 
 	@permission_classes((AllowAny,))
 	def get(self, request):
@@ -260,6 +258,7 @@ class PublicServiceView(APIView):
 		serializer = PublicServiceSerializer(services, many=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
+	@permission_classes((IsAuthenticated,))
 	def post(self, request):
 		seekerpk = request.user.pk
 		data = request.data
@@ -269,6 +268,7 @@ class PublicServiceView(APIView):
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+	@permission_classes((IsAuthenticated,))
 	def put(self, request, pk):
 		service = self._get_object(pk)
 		serializer = PublicServiceSerializer(service, data=request.data)
@@ -277,6 +277,7 @@ class PublicServiceView(APIView):
 			return Response(serializer.data, status=status.HTTP_200_OK)
 		return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
+	@permission_classes((IsAuthenticated,))
 	def delete(self, request, pk):
 		service = self._get_object(pk)
 		for bid in service.bid_set.all():
@@ -341,7 +342,7 @@ class ServiceImagesView(APIView):
 	"""
 
 	authentication_classes = (TokenAuthentication,)
-	permission_classes = (IsAuthenticated,)
+	# permission_classes = (IsAuthenticated,)
 
 	@permission_classes((AllowAny,))
 	def get(self, request, pk):
@@ -350,6 +351,7 @@ class ServiceImagesView(APIView):
 		serializer = ServiceImageSerializer(images, many=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
+	@permission_classes((IsAuthenticated,))
 	def post(self, request, pk):
 		service = self._get_service_object(pk)
 		data = request.data
@@ -359,6 +361,7 @@ class ServiceImagesView(APIView):
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+	@permission_classes((IsAuthenticated,))
 	def delete(self, request, pk):
 		image = self._get_image_object(pk)
 		image.delete()
