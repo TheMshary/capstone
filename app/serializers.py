@@ -172,7 +172,7 @@ class ProfileSerializer(serializers.Serializer):
 	about = serializers.CharField(required=False)
 	phone_number = serializers.CharField(required=False)
 	email = serializers.EmailField(required=False)
-	image = serializers.ImageField(required=False)
+	image = serializers.CharField(required=False)
 	usertype = serializers.CharField(required=False)
 
 	country = serializers.CharField(required=False)
@@ -183,7 +183,12 @@ class ProfileSerializer(serializers.Serializer):
 		instance.about = validated_data.get("about", instance.about)
 		instance.phone_number = validated_data.get("phone_number", instance.phone_number)
 		instance.email = validated_data.get("email", instance.email)
-		instance.image = validated_data.get("image", instance.image)
+
+		b64_text = validated_data.get("image", instance.image)
+		image_data = b64decode(b64_text)
+		contentfile = ContentFile(image_data, filename)
+		instance.image = contentfile
+
 		instance.usertype = validated_data.get("usertype", instance.usertype)
 		
 		instance.country = validated_data.get("country", instance.country)
