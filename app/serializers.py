@@ -185,7 +185,7 @@ class ProfileSerializer(serializers.Serializer):
 		instance.email = validated_data.get("email", instance.email)
 
 		# b64_encoded = b64encode(instance.image) 
-		b64_text = validated_data.get("image", None)
+		b64_text = validated_data.get("image", "")
 		image_data = b64decode(b64_text)
 		contentfile = ContentFile(image_data, filename)
 		instance.image = contentfile
