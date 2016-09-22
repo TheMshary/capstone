@@ -168,11 +168,12 @@ class PublicServiceSerializer(serializers.ModelSerializer):
 		return instance
 
 
+# TODO: IMAGES CRAP
 class ProfileSerializer(serializers.Serializer):
 	about = serializers.CharField(required=False)
 	phone_number = serializers.CharField(required=False)
 	email = serializers.EmailField(required=False)
-	image = serializers.CharField(required=False)
+	# image = serializers.CharField(required=False)
 	usertype = serializers.CharField(required=False)
 
 	country = serializers.CharField(required=False)
@@ -185,10 +186,10 @@ class ProfileSerializer(serializers.Serializer):
 		instance.email = validated_data.get("email", instance.email)
 
 		# b64_encoded = b64encode(instance.image) 
-		b64_text = validated_data.get("image", "")
-		image_data = b64decode(b64_text)
-		contentfile = ContentFile(image_data, filename)
-		instance.image = contentfile
+		# b64_text = validated_data.get("image", "")
+		# image_data = b64decode(b64_text)
+		# contentfile = ContentFile(image_data, filename)
+		# instance.image = contentfile
 
 		instance.usertype = validated_data.get("usertype", instance.usertype)
 		
@@ -210,7 +211,7 @@ class ProfileSerializer(serializers.Serializer):
 			"about": profile.about,
 			"phone_number": profile.phone_number,
 			"email": profile.email,
-			"image": profile.image,
+			# "image": profile.image,
 			"usertype": profile.usertype,
 			"country": profile.country,
 			"area": profile.area,

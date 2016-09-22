@@ -48,7 +48,7 @@ from app.serializers import (
 ##############################
 class AcceptBidView(APIView):
 	"""
-	Seeker declining a bid
+	Seeker accepting a bid
 	"""
 
 	authentication_classes = (TokenAuthentication,)
