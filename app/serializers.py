@@ -175,7 +175,6 @@ class ProfileSerializer(serializers.Serializer):
 	image = serializers.ImageField(required=False)
 	usertype = serializers.CharField(required=False)
 
-	rating = serializers.FloatField(required=False)
 	country = serializers.CharField(required=False)
 	area = serializers.CharField(required=False)
 	street_address = serializers.CharField(required=False)
@@ -187,7 +186,6 @@ class ProfileSerializer(serializers.Serializer):
 		instance.image = validated_data.get("image", instance.image)
 		instance.usertype = validated_data.get("usertype", instance.usertype)
 		
-		instance.rating = validated_data.get("rating", instance.rating)
 		instance.country = validated_data.get("country", instance.country)
 		instance.area = validated_data.get("area", instance.area)
 		instance.street_address = validated_data.get("street_address", instance.street_address)
