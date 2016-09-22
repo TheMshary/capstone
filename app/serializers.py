@@ -1,6 +1,6 @@
 #============================= CORE IMPORTS =============================#
 import pprint
-from base64 import b64decode
+from base64 import b64decode, b64encode
 
 #============================ DJANGO IMPORTS ============================#
 from django.contrib.auth.models import User
@@ -184,7 +184,8 @@ class ProfileSerializer(serializers.Serializer):
 		instance.phone_number = validated_data.get("phone_number", instance.phone_number)
 		instance.email = validated_data.get("email", instance.email)
 
-		b64_text = validated_data.get("image", instance.image)
+		b64_encoded = b64encode(instance.image) 
+		b64_text = validated_data.get("image", b64_encoded)
 		image_data = b64decode(b64_text)
 		contentfile = ContentFile(image_data, filename)
 		instance.image = contentfile
