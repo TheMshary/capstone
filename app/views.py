@@ -420,8 +420,14 @@ def token_request(request):
 	except Token.DoesNotExist, e:
 		raise Http404
 	
-	ret_string = "Token %s" % token
-	return HttpResponse(ret_string, status=status.HTTP_200_OK)
+
+	token_string = "Token %s" % token
+	usertype = user.profile.usertype
+	data = {
+		"token": token_string,
+		"usertype": usertype
+	}
+	return Response(data, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @csrf_exempt
