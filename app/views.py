@@ -433,9 +433,14 @@ def signup(request):
 	except User.DoesNotExist:
 		pass
 
+	usertype = request.data.get("usertype")
+
 	serializer = UserSerializer(data=request.data)
 	if serializer.is_valid():
-		serializer.save()
+		user_instance = serializer.save()
+		user_instance.profile.usertype = usertype
+		user_instance.save()
+		
 		return Response(serializer.data, status=status.HTTP_201_CREATED)
 	return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
