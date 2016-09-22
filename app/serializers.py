@@ -200,6 +200,26 @@ class ProfileSerializer(serializers.Serializer):
 
 		return instance
 
+	def to_representation(self, profile):
+		"""
+		When using this serializer to serialize to JSON representation,
+		this function returns that JSON.
+		"""
+
+		data = {
+			"about": profile.about,
+			"phone_number": profile.phone_number,
+			"email": profile.email,
+			"image": profile.image,
+			"usertype": profile.usertype,
+			"country": profile.country,
+			"area": profile.area,
+			"street_address": profile.street_address,
+			"username": profile.user.username,
+		}
+
+		return data
+
 
 
 
