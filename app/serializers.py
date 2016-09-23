@@ -168,7 +168,7 @@ class PublicServiceSerializer(serializers.ModelSerializer):
 		return instance
 
 
-# TODO: IMAGES CRAP
+# TODO: IMAGE CRAP
 class ProfileSerializer(serializers.Serializer):
 	about = serializers.CharField(required=False)
 	phone_number = serializers.CharField(required=False)

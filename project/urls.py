@@ -26,6 +26,7 @@ urlpatterns = [
 	url(r'^admin/', admin.site.urls),
 
 	# UNTESTED
+	url(r'^acceptbid/(?P<pk>[0-9]+)/', views.AcceptBidView.as_view()),
 	url(r'^declinebid/(?P<pk>[0-9]+)/', views.DeclineBidView.as_view()),
 	url(r'^providerdone/(?P<pk>[0-9]+)/', views.ProviderDoneView.as_view()),
 	url(r'^providerresponse/(?P<pk>[0-9]+)/', views.ProviderResponseView.as_view()),
