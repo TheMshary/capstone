@@ -115,7 +115,7 @@ class ProviderDoneView(APIView):
 		service.status = "Done"
 		service.save()
 
-		return Response(status=status.HTTP_201_CREATED)
+		return Response(status=status.HTTP_200_OK)
 
 ##############################
 ########## UNTESTED ##########
@@ -142,7 +142,7 @@ class ProviderResponseView(APIView):
 
 		service.save()
 
-		return Response(status=status.HTTP_201_CREATED)
+		return Response(status=status.HTTP_200_OK)
 
 ##############################
 ########## UNTESTED ##########
@@ -203,7 +203,7 @@ class OfferedServiceView(APIView):
 	@permission_classes((AllowAny,))
 	def get(self, request):
 		query_last = request.GET.get('query_last', None)
-		services = OfferedService.objects.all()[:query_last].order_by(created)
+		services = OfferedService.objects.all()[:query_last].order_by('created')
 		serializer = OfferedServiceSerializer(services, many=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -254,7 +254,7 @@ class PublicServiceView(APIView):
 	@permission_classes((AllowAny,))
 	def get(self, request):
 		query_last = request.GET.get('query_last', None)
-		services = PublicService.objects.all()[:query_last].order_by(created)
+		services = PublicService.objects.all()[:query_last].order_by('created')
 		serializer = PublicServiceSerializer(services, many=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -394,6 +394,7 @@ class LogView(APIView):
 		user = request.user
 		query_last = request.GET.get('query_last', None)
 		usertype = user.profile.usertype
+
 		if usertype == "seeker":
 			services = Service.objects.filter(seekerpk=user.pk)[:query_last]
 		elif usertype == "provider":
