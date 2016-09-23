@@ -346,14 +346,15 @@ class ServiceImagesView(APIView):
 
 	@permission_classes((AllowAny,))
 	def get(self, request, pk):
-		service = self._get_service_object(pk)
-		images = ServiceImage.objects.all(service=service)
+		service = self._get_service(pk)
+		query_last = request.GET.get('query_last', None)
+		images = ServiceImage.objects.filter(service=service)[:query_last]
 		serializer = ServiceImageSerializer(images, many=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
 	@permission_classes((IsAuthenticated,))
 	def post(self, request, pk):
-		service = self._get_service_object(pk)
+		service = self._get_service(pk)
 		data = request.data
 		serializer = ServiceImageSerializer(data=data, context={"service":service})
 		if serializer.is_valid():
@@ -363,17 +364,17 @@ class ServiceImagesView(APIView):
 
 	@permission_classes((IsAuthenticated,))
 	def delete(self, request, pk):
-		image = self._get_image_object(pk)
+		image = self._get_image(pk)
 		image.delete()
 		return Response(status=status.HTTP_200_OK)
 
-	def _get_image_object(self, pk):
+	def _get_image(self, pk):
 		try:
 			return ServiceImage.objects.get(pk=pk)
 		except ServiceImage.DoesNotExist, e:
 			raise Http404
 
-	def _get_service_object(self, pk):
+	def _get_service(self, pk):
 		try:
 			return OfferedService.objects.get(pk=pk)
 		except OfferedService.DoesNotExist, e:
