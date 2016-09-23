@@ -203,7 +203,7 @@ class OfferedServiceView(APIView):
 	@permission_classes((AllowAny,))
 	def get(self, request):
 		query_last = request.GET.get('query_last', None)
-		services = OfferedService.objects.all()[:query_last].order_by('created')
+		services = OfferedService.objects.all()[:query_last].order_by('service.created')
 		serializer = OfferedServiceSerializer(services, many=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -254,7 +254,7 @@ class PublicServiceView(APIView):
 	@permission_classes((AllowAny,))
 	def get(self, request):
 		query_last = request.GET.get('query_last', None)
-		services = PublicService.objects.all()[:query_last].order_by('created')
+		services = PublicService.objects.all()[:query_last].order_by('service.created')
 		serializer = PublicServiceSerializer(services, many=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
