@@ -124,6 +124,8 @@ class OfferedServiceSerializer(serializers.ModelSerializer):
 			
 		return offeredservice
 
+
+	# DO THIS YOU LAZY FUCKSTARD
 	def update(self, instance, validated_data):
 		service = validated_data.get("service")
 

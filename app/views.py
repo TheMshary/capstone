@@ -1,5 +1,6 @@
 #============================= CORE IMPORTS =============================#
 import pprint
+import time
 
 #============================ DJANGO IMPORTS ============================#
 from django.template import RequestContext
@@ -447,8 +448,8 @@ def signup(request):
 	if serializer.is_valid():
 		user_instance = serializer.save()
 		user_instance.profile.usertype = usertype
-		user_instance.save()
-		
+		user_instance.profile.save()
+
 		return Response(serializer.data, status=status.HTTP_201_CREATED)
 	return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
