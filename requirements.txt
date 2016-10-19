@@ -3,6 +3,7 @@ blessed==1.9.5
 botocore==1.4.36
 cement==2.8.2
 colorama==0.3.7
+coverage==4.2
 Django==1.9.6
 django-allauth==0.26.1
 django-braces==1.9.0
