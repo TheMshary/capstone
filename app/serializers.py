@@ -1,6 +1,6 @@
 #============================= CORE IMPORTS =============================#
 import pprint
-from base64 import b64decode
+from base64 import b64decode, b64encode
 
 #============================ DJANGO IMPORTS ============================#
 from django.contrib.auth.models import User
@@ -127,6 +127,8 @@ class OfferedServiceSerializer(serializers.ModelSerializer):
 			
 		return offeredservice
 
+
+	# DO THIS YOU LAZY FUCKSTARD
 	def update(self, instance, validated_data):
 		service = validated_data.get("service")
 
@@ -176,12 +178,12 @@ class RatingSerializer(serializers.ModelSerializer):
 		model = Rating
 		fields = '__all__'
 
-
+		
 class ProfileSerializer(serializers.Serializer):
 	about = serializers.CharField(required=False)
 	phone_number = serializers.CharField(required=False)
 	email = serializers.EmailField(required=False)
-	image = serializers.ImageField(required=False)
+	# image = serializers.CharField(required=False)
 	usertype = serializers.CharField(required=False)
 
 	rating_set = RatingSerializer(many=True)
@@ -193,9 +195,14 @@ class ProfileSerializer(serializers.Serializer):
 		instance.about = validated_data.get("about", instance.about)
 		instance.phone_number = validated_data.get("phone_number", instance.phone_number)
 		instance.email = validated_data.get("email", instance.email)
-		instance.image = validated_data.get("image", instance.image)
+
+		# b64_encoded = b64encode(instance.image) 
+		# b64_text = validated_data.get("image", "")
+		# image_data = b64decode(b64_text)
+		# contentfile = ContentFile(image_data, filename)
+		# instance.image = contentfile
+
 		instance.usertype = validated_data.get("usertype", instance.usertype)
-		
 		# instance.rating = validated_data.get("rating", instance.rating)
 		instance.country = validated_data.get("country", instance.country)
 		instance.area = validated_data.get("area", instance.area)
@@ -204,6 +211,26 @@ class ProfileSerializer(serializers.Serializer):
 		instance.save()
 
 		return instance
+
+	def to_representation(self, profile):
+		"""
+		When using this serializer to serialize to JSON representation,
+		this function returns that JSON.
+		"""
+
+		data = {
+			"about": profile.about,
+			"phone_number": profile.phone_number,
+			"email": profile.email,
+			# "image": profile.image,
+			"usertype": profile.usertype,
+			"country": profile.country,
+			"area": profile.area,
+			"street_address": profile.street_address,
+			"username": profile.user.username,
+		}
+
+		return data
 
 
 
