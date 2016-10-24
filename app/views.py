@@ -212,7 +212,6 @@ class OfferedServiceView(APIView):
 	@permission_classes((AllowAny,))
 	def get(self, request):
 		query_last = request.GET.get('query_last', None)
-<<<<<<< HEAD
 		servicepk = request.GET.get('servicepk', None)
 		if servicepk is None:
 			try:
@@ -222,11 +221,6 @@ class OfferedServiceView(APIView):
 
 			serializer = OfferedServiceSerializer(services, many=True)
 			return Response(serializer.data, status=status.HTTP_200_OK)
-=======
-		services = OfferedService.objects.all()[:query_last].order_by('-service__created')
-		serializer = OfferedServiceSerializer(services, many=True)
-		return Response(serializer.data, status=status.HTTP_200_OK)
->>>>>>> master
 
 		else:
 			service = self._get_object(servicepk)
@@ -282,7 +276,6 @@ class PublicServiceView(APIView):
 	@permission_classes((AllowAny,))
 	def get(self, request):
 		query_last = request.GET.get('query_last', None)
-<<<<<<< HEAD
 		servicepk = request.GET.get('servicepk', None)
 		if servicepk is None:
 			try:
@@ -314,11 +307,6 @@ class PublicServiceView(APIView):
 			service = self._get_object(servicepk)
 			serializer = PublicServiceSerializer(service)
 			return Response(serializer.data, status=status.HTTP_200_OK)
-=======
-		services = PublicService.objects.all()[:query_last].order_by('-service__created')
-		serializer = PublicServiceSerializer(services, many=True)
-		return Response(serializer.data, status=status.HTTP_200_OK)
->>>>>>> master
 
 	@permission_classes((IsAuthenticated,))
 	def post(self, request):
