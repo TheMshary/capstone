@@ -26,10 +26,11 @@ urlpatterns = [
 	url(r'^admin/', admin.site.urls),
 
 	# UNTESTED
+	url(r'^acceptbid/(?P<pk>[0-9]+)/', views.AcceptBidView.as_view()),
 	url(r'^declinebid/(?P<pk>[0-9]+)/', views.DeclineBidView.as_view()),
 	url(r'^providerdone/(?P<pk>[0-9]+)/', views.ProviderDoneView.as_view()),
 	url(r'^providerresponse/(?P<pk>[0-9]+)/', views.ProviderResponseView.as_view()),
-	url(r'^request/(?P<pk>[0-9]+)/', views.RequestView.as_view()),
+	url(r'^request/', views.RequestView.as_view()),
 
 	# GET:		Returns services associated with the logged in user.
 	url(r'^log/', views.LogView.as_view()),
@@ -39,7 +40,6 @@ urlpatterns = [
 	# PUT:		Updates an existing offered service.
 	# DELETE:	Deletes offered service and it's images.
 	url(r'^offeredservice/$', views.OfferedServiceView.as_view()),
-	url(r'^offeredservice/(?P<pk>[0-9]+)/', views.OfferedServiceView.as_view()),
 
 	# GET:		Loads public services (with/without) their bids.
 	# POST:		Posts a public service.

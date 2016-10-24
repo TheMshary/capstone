@@ -52,7 +52,7 @@ class Profile(models.Model):
 	area = models.CharField(max_length=100, null=True, blank=True)
 	street_address = models.CharField(max_length=100, null=True, blank=True)
 
-	def __str__(self):
+	def __unicode__(self):
 		return self.user.username
 
 
@@ -60,8 +60,8 @@ class Rating(models.Model):
 	rate = models.FloatField(default=0.0)
 	profile = models.ForeignKey(Profile)
 
-	def __str__(self):
-		return "%s" % self.rate
+	def __unicode__(self):
+		return self.rate
 
 #============================= BASE SERVICE MODEL ==============================#
 
@@ -98,7 +98,7 @@ class Service(models.Model):
 
 	is_special = models.BooleanField(default=False)
 
-	def __str__(self):
+	def __unicode__(self):
 		return "%s" % self.title
 
 #============================= SERVICE TYPES ==============================#
@@ -107,7 +107,7 @@ class PublicService(models.Model):
 	service = models.OneToOneField(Service, null=True)
 	category = models.CharField(max_length=1337, default="other") #Make this into choices.
 
-	def __str__(self):
+	def __unicode__(self):
 		return self.service.title
 
 
@@ -115,7 +115,7 @@ class OfferedService(models.Model):
 	service = models.OneToOneField(Service, null=True)
 	category = models.CharField(max_length=1337, default="other") #Make this into choices.
 
-	def __str__(self):
+	def __unicode__(self):
 		return self.service.title
 
 #============================= SUPPORT MODELS ==============================#
@@ -126,7 +126,7 @@ class ServiceImage(models.Model):
 	name = models.CharField(max_length=9001, null=True)
 	service = models.ForeignKey(OfferedService, null=True)
 
-	def __str__(self):
+	def __unicode__(self):
 		return "%s" % self.name
 
 
@@ -144,8 +144,8 @@ class Bid(models.Model):
 	bid = models.IntegerField(default=0.0)
 	status = models.CharField(max_length=101, default=PENDING)
 
-	def __str__(self):
-		return "%s" % self.bid
+	def __unicode__(self):
+		return self.bid
 
 
 

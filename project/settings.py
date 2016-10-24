@@ -43,6 +43,8 @@ INSTALLED_APPS = [
 	'app',
 	'rest_framework',
 	'rest_framework.authtoken',
+	'coverage',
+	'model_mommy',
 ]
 
 # from app.permissions import CsrfExemptSessionAuthentication

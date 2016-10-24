@@ -11,7 +11,7 @@ from django.http import Http404
 from rest_framework import serializers
 
 #============================= APP IMPORTS ==============================#
-from app.models import OfferedService, ServiceImage, Profile, Service, Bid, PublicService
+from app.models import OfferedService, ServiceImage, Profile, Rating, Service, Bid, PublicService
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -101,15 +101,18 @@ class BidSerializer(serializers.ModelSerializer):
 
 
 class OfferedServiceSerializer(serializers.ModelSerializer):
-	serviceimage_set = ServiceImageSerializer(many=True)
-	service = ServiceSerializer()
+	serviceimage_set = ServiceImageSerializer(many=True, required=False)
+	service = ServiceSerializer(required=False)
 
 	class Meta:
 		model = OfferedService
 		fields = '__all__'
 
 	def create(self, validated_data):
-		images_data = validated_data.pop('serviceimage_set')
+		if validated_data.get('serviceimage_set') is not None:
+			images_data = validated_data.pop('serviceimage_set')
+		else:
+			images_data = []
 		service_data = validated_data.pop('service')
 
 		service = Service.objects.create(**service_data)
@@ -168,6 +171,12 @@ class PublicServiceSerializer(serializers.ModelSerializer):
 		return instance
 
 
+class RatingSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Rating
+		fields = '__all__'
+
+
 class ProfileSerializer(serializers.Serializer):
 	about = serializers.CharField(required=False)
 	phone_number = serializers.CharField(required=False)
@@ -175,7 +184,7 @@ class ProfileSerializer(serializers.Serializer):
 	image = serializers.ImageField(required=False)
 	usertype = serializers.CharField(required=False)
 
-	rating = serializers.FloatField(required=False)
+	rating_set = RatingSerializer(many=True)
 	country = serializers.CharField(required=False)
 	area = serializers.CharField(required=False)
 	street_address = serializers.CharField(required=False)
@@ -187,7 +196,7 @@ class ProfileSerializer(serializers.Serializer):
 		instance.image = validated_data.get("image", instance.image)
 		instance.usertype = validated_data.get("usertype", instance.usertype)
 		
-		instance.rating = validated_data.get("rating", instance.rating)
+		# instance.rating = validated_data.get("rating", instance.rating)
 		instance.country = validated_data.get("country", instance.country)
 		instance.area = validated_data.get("area", instance.area)
 		instance.street_address = validated_data.get("street_address", instance.street_address)
