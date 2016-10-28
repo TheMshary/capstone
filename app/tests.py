@@ -24,6 +24,50 @@ from model_mommy import mommy
 #======================== API TESTS ========================#
 
 
+class ProviderBidOnServicesTest(APITestCase):
+	user = None
+
+	def setUp(self):
+		# make Provider account
+		user = User.objects.create_user(username='e', password='f')
+		user.profile.usertype = 'provider'
+		user.profile.save()
+		self.user = user
+
+		# make 5 Public Services, two with bids KD4 and KD6
+		service = mommy.make(Service, providerpk=user.pk)
+		mommy.make(PublicService, service=service)
+
+		service = mommy.make(Service, providerpk=user.pk)
+		mommy.make(PublicService, service=service)
+
+		service = mommy.make(Service, providerpk=user.pk)
+		mommy.make(PublicService, service=service)
+
+		service = mommy.make(Service, providerpk=user.pk)
+		serv = mommy.make(PublicService, service=service)
+		mommy.make(Bid, service=serv, bid=4, bidder=user)
+
+		service = mommy.make(Service, providerpk=user.pk)
+		serv = mommy.make(PublicService, service=service)
+		mommy.make(Bid, service=serv, bid=6, bidder=user)
+
+		# login
+		token = Token.objects.get(user__username='e')
+		# Include an appropriate 'Authorization:' header on all requests.
+		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+	def test_get(self):
+		url = '/publicservice/'
+		response = self.client.get(url, format='json')
+
+		bidcount = len(response.data.get('bids'))
+		feedcount = len(response.data.get('feed'))
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(bidcount, 2)
+		self.assertEqual(feedcount, 5)
+
+
 class ProviderOfferedServicesTest(APITestCase):
 	pk = None
 
@@ -403,12 +447,12 @@ class PublicServiceTest(APITestCase):
 		publicserv.bid_set = bids
 
 		res = self.client.get('/publicservice/', format='json')
-		before = len(res.data)
+		before = len(res.data.get('feed'))
 
 		response = self.client.delete(url, format='json')
 
 		res = self.client.get('/publicservice/', format='json')
-		after = len(res.data)
+		after = len(res.data.get('feed'))
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(before, after+1)

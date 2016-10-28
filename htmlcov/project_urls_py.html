@@ -143,6 +143,7 @@
 <p id="n74" class="pln"><a href="#n74">74</a></p>
 <p id="n75" class="pln"><a href="#n75">75</a></p>
 <p id="n76" class="pln"><a href="#n76">76</a></p>
+<p id="n77" class="pln"><a href="#n77">77</a></p>
 
             </td>
             <td class="text">
@@ -188,40 +189,41 @@
 <p id="t40" class="pln">        <span class="com"># PUT:          Updates an existing offered service.</span><span class="strut">&nbsp;</span></p>
 <p id="t41" class="pln">        <span class="com"># DELETE:       Deletes offered service and it's images.</span><span class="strut">&nbsp;</span></p>
 <p id="t42" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^offeredservice/$'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">OfferedServiceView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
-<p id="t43" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t44" class="pln">        <span class="com"># GET:          Loads public services (with/without) their bids.</span><span class="strut">&nbsp;</span></p>
-<p id="t45" class="pln">        <span class="com"># POST:         Posts a public service.</span><span class="strut">&nbsp;</span></p>
-<p id="t46" class="pln">        <span class="com"># PUT:          Updates an existing public service.</span><span class="strut">&nbsp;</span></p>
-<p id="t47" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^publicservice/$'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">PublicServiceView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
-<p id="t48" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^publicservice/(?P&lt;pk>[0-9]+)/'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">PublicServiceView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
-<p id="t49" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t50" class="pln">        <span class="com"># Might be unecessary since bids are being sent back along with the</span><span class="strut">&nbsp;</span></p>
-<p id="t51" class="pln">        <span class="com">## public services they're under in /publicservice/</span><span class="strut">&nbsp;</span></p>
-<p id="t52" class="pln">        <span class="com"># GET:          Loads all bids from a public service.</span><span class="strut">&nbsp;</span></p>
-<p id="t53" class="pln">        <span class="com"># POST:         Posts a bid on a public service.</span><span class="strut">&nbsp;</span></p>
-<p id="t54" class="pln">        <span class="com"># PUT:          Update existing bid.</span><span class="strut">&nbsp;</span></p>
-<p id="t55" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^bid/(?P&lt;pk>[0-9]+)/'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">BidView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
-<p id="t56" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t57" class="pln">        <span class="com"># Unnecessary now, will be used later when saving actual image files</span><span class="strut">&nbsp;</span></p>
-<p id="t58" class="pln">        <span class="com">## only if it's more efficient to not load images in the offered</span><span class="strut">&nbsp;</span></p>
-<p id="t59" class="pln">        <span class="com">## list view, and only load them in the detail view</span><span class="strut">&nbsp;</span></p>
-<p id="t60" class="pln">        <span class="com"># GET:          Loads images of an offered service.</span><span class="strut">&nbsp;</span></p>
-<p id="t61" class="pln">        <span class="com"># POST:         Posts an images on an offered service.</span><span class="strut">&nbsp;</span></p>
-<p id="t62" class="pln">        <span class="com"># DELETE:       Deletes an image from an offered service.</span><span class="strut">&nbsp;</span></p>
-<p id="t63" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^offeredimages/(?P&lt;pk>[0-9]+)/'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">ServiceImagesView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
-<p id="t64" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t65" class="pln">        <span class="com"># GET:          Loads profile info of the logged in user</span><span class="strut">&nbsp;</span></p>
-<p id="t66" class="pln">        <span class="com"># PUT:          Updates profile info of the logged in user</span><span class="strut">&nbsp;</span></p>
-<p id="t67" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^profile/$'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">ProfileView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
-<p id="t68" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t69" class="pln">        <span class="com"># Accounts stuff</span><span class="strut">&nbsp;</span></p>
-<p id="t70" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^signup/$'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">signup</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
-<p id="t71" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^logout/$'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">logout_view</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
-<p id="t72" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^login/'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">token_request</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
-<p id="t73" class="pln">        <span class="com"># Authenticating login</span><span class="strut">&nbsp;</span></p>
-<p id="t74" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^api-token-auth/'</span><span class="op">,</span> <span class="nam">framework_views</span><span class="op">.</span><span class="nam">obtain_auth_token</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
-<p id="t75" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t76" class="pln"><span class="op">]</span> <span class="op">+</span> <span class="nam">static</span><span class="op">(</span><span class="nam">settings</span><span class="op">.</span><span class="nam">MEDIA_URL</span><span class="op">,</span> <span class="nam">document_root</span><span class="op">=</span><span class="nam">settings</span><span class="op">.</span><span class="nam">MEDIA_ROOT</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
+<p id="t43" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^offeredservice/provider/$'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">OfferedServiceOfProviderView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
+<p id="t44" class="pln"><span class="strut">&nbsp;</span></p>
+<p id="t45" class="pln">        <span class="com"># GET:          Loads public services (with/without) their bids.</span><span class="strut">&nbsp;</span></p>
+<p id="t46" class="pln">        <span class="com"># POST:         Posts a public service.</span><span class="strut">&nbsp;</span></p>
+<p id="t47" class="pln">        <span class="com"># PUT:          Updates an existing public service.</span><span class="strut">&nbsp;</span></p>
+<p id="t48" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^publicservice/$'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">PublicServiceView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
+<p id="t49" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^publicservice/(?P&lt;pk>[0-9]+)/'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">PublicServiceView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
+<p id="t50" class="pln"><span class="strut">&nbsp;</span></p>
+<p id="t51" class="pln">        <span class="com"># Might be unecessary since bids are being sent back along with the</span><span class="strut">&nbsp;</span></p>
+<p id="t52" class="pln">        <span class="com">## public services they're under in /publicservice/</span><span class="strut">&nbsp;</span></p>
+<p id="t53" class="pln">        <span class="com"># GET:          Loads all bids from a public service.</span><span class="strut">&nbsp;</span></p>
+<p id="t54" class="pln">        <span class="com"># POST:         Posts a bid on a public service.</span><span class="strut">&nbsp;</span></p>
+<p id="t55" class="pln">        <span class="com"># PUT:          Update existing bid.</span><span class="strut">&nbsp;</span></p>
+<p id="t56" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^bid/(?P&lt;pk>[0-9]+)/'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">BidView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
+<p id="t57" class="pln"><span class="strut">&nbsp;</span></p>
+<p id="t58" class="pln">        <span class="com"># Unnecessary now, will be used later when saving actual image files</span><span class="strut">&nbsp;</span></p>
+<p id="t59" class="pln">        <span class="com">## only if it's more efficient to not load images in the offered</span><span class="strut">&nbsp;</span></p>
+<p id="t60" class="pln">        <span class="com">## list view, and only load them in the detail view</span><span class="strut">&nbsp;</span></p>
+<p id="t61" class="pln">        <span class="com"># GET:          Loads images of an offered service.</span><span class="strut">&nbsp;</span></p>
+<p id="t62" class="pln">        <span class="com"># POST:         Posts an images on an offered service.</span><span class="strut">&nbsp;</span></p>
+<p id="t63" class="pln">        <span class="com"># DELETE:       Deletes an image from an offered service.</span><span class="strut">&nbsp;</span></p>
+<p id="t64" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^offeredimages/(?P&lt;pk>[0-9]+)/'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">ServiceImagesView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
+<p id="t65" class="pln"><span class="strut">&nbsp;</span></p>
+<p id="t66" class="pln">        <span class="com"># GET:          Loads profile info of the logged in user</span><span class="strut">&nbsp;</span></p>
+<p id="t67" class="pln">        <span class="com"># PUT:          Updates profile info of the logged in user</span><span class="strut">&nbsp;</span></p>
+<p id="t68" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^profile/$'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">ProfileView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
+<p id="t69" class="pln"><span class="strut">&nbsp;</span></p>
+<p id="t70" class="pln">        <span class="com"># Accounts stuff</span><span class="strut">&nbsp;</span></p>
+<p id="t71" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^signup/$'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">signup</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
+<p id="t72" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^logout/$'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">logout_view</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
+<p id="t73" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^login/'</span><span class="op">,</span> <span class="nam">views</span><span class="op">.</span><span class="nam">token_request</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
+<p id="t74" class="pln">        <span class="com"># Authenticating login</span><span class="strut">&nbsp;</span></p>
+<p id="t75" class="pln">        <span class="nam">url</span><span class="op">(</span><span class="str">r'^api-token-auth/'</span><span class="op">,</span> <span class="nam">framework_views</span><span class="op">.</span><span class="nam">obtain_auth_token</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
+<p id="t76" class="pln"><span class="strut">&nbsp;</span></p>
+<p id="t77" class="pln"><span class="op">]</span> <span class="op">+</span> <span class="nam">static</span><span class="op">(</span><span class="nam">settings</span><span class="op">.</span><span class="nam">MEDIA_URL</span><span class="op">,</span> <span class="nam">document_root</span><span class="op">=</span><span class="nam">settings</span><span class="op">.</span><span class="nam">MEDIA_ROOT</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 
             </td>
         </tr>
@@ -232,7 +234,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v4.2</a>,
-            created at 2016-10-26 10:58
+            created at 2016-10-28 11:34
         </p>
     </div>
 </div>

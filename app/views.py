@@ -282,10 +282,12 @@ class PublicServiceView(APIView):
 			data = {'feed':serializer.data}
 			user = request.user
 			if user is not None:
-				bidon = PublicService.objects.filter(bid_set__bidder=user)
-				bidserializer = BidSerializer(bidon, many=True)
-				data.update({'bids':bidserializer.data})
-
+				bidon = Bid.objects.filter(bidder=user)
+				services = []
+				for bid in bidon:
+					services.append(bid.service)
+				serviceserializer = PublicServiceSerializer(services, many=True)
+				data.update({'bids':serviceserializer.data})
 			return Response(data, status=status.HTTP_200_OK)
 		else:
 			service = self._get_object(servicepk)
