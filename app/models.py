@@ -66,6 +66,22 @@ class Rating(models.Model):
 #============================= BASE SERVICE MODEL ==============================#
 
 class Service(models.Model):
+	CLEANING = 'cleaning'
+	FOOD = 'food'
+	ERRANDS = 'errands'
+	PET = 'pet'
+	REAL_ESTATE = 'real estate'
+	BEAUTY = 'beauty'
+	OTHER = 'other'
+	CATEGORY_CHOICES = (
+		(CLEANING, 'Cleaning'),
+		(FOOD, 'Food'),
+		(ERRANDS, 'Errands'),
+		(PET, 'Pet'),
+		(REAL_ESTATE, 'Real Estate'),
+		(BEAUTY, 'Beauty'),
+		(OTHER, 'Other'),
+	)
 
 	AVAILABLE = "available"
 	UNAVAILABLE = "unavailable"
@@ -94,6 +110,7 @@ class Service(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	seekerpk = models.IntegerField(null=True, blank=True)
 	providerpk = models.IntegerField(null=True, blank=True)
+	category = models.CharField(max_length=1337, choices=CATEGORY_CHOICES, default=OTHER)
 	# available Service Days/Hours (has default "any time")
 
 	is_special = models.BooleanField(default=False)
@@ -105,7 +122,6 @@ class Service(models.Model):
 
 class PublicService(models.Model):
 	service = models.OneToOneField(Service, null=True)
-	category = models.CharField(max_length=1337, default="other") #Make this into choices.
 
 	def __unicode__(self):
 		return self.service.title
@@ -113,7 +129,6 @@ class PublicService(models.Model):
 
 class OfferedService(models.Model):
 	service = models.OneToOneField(Service, null=True)
-	category = models.CharField(max_length=1337, default="other") #Make this into choices.
 
 	def __unicode__(self):
 		return self.service.title
@@ -143,7 +158,7 @@ class Bid(models.Model):
 	service = models.ForeignKey(PublicService)
 	bid = models.IntegerField(default=0.0)
 	bidder = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
-	status = models.CharField(max_length=101, default=PENDING)
+	status = models.CharField(max_length=101,choices=STATUS_CHOICES, default=PENDING)
 
 	def __unicode__(self):
 		return self.bid
