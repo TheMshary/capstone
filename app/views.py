@@ -257,7 +257,6 @@ class OfferedServiceOfProviderView(APIView):
 
 	@permission_classes((AllowAny,))
 	def get(self, request):
-		query_last = request.GET.get('query_last', None)
 		providerpk = request.GET.get('providerpk', None)
 		
 		services = OfferedService.objects.filter(service__providerpk=providerpk).order_by('-service__created')

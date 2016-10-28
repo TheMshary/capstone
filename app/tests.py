@@ -24,6 +24,28 @@ from model_mommy import mommy
 #======================== API TESTS ========================#
 
 
+class ProviderOfferedServicesTest(APITestCase):
+	pk = None
+
+	def setUp(self):
+		user = User.objects.create_user(username='e', password='f')
+		user.profile.usertype = 'provider'
+		user.profile.save()
+		self.pk = user.pk
+
+		mommy.make(OfferedService, service__providerpk=self.pk, _quantity=5)
+
+	def test_get(self):
+		url = '/offeredservice/provider/'
+		data = {
+			'providerpk':self.pk
+		}
+		response = self.client.get(url, data, format='json')
+
+		count = len(OfferedService.objects.filter(service__providerpk=self.pk))
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(len(response.data), count)
+
 class ProviderResponseTest(APITestCase):
 	service = None
 
