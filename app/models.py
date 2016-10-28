@@ -142,6 +142,7 @@ class Bid(models.Model):
 	)
 	service = models.ForeignKey(PublicService)
 	bid = models.IntegerField(default=0.0)
+	bidder = models.ForeignKey(settings.AUTH_USER_MODEL)
 	status = models.CharField(max_length=101, default=PENDING)
 
 	def __unicode__(self):

@@ -277,13 +277,16 @@ class PublicServiceView(APIView):
 		query_last = request.GET.get('query_last', None)
 		servicepk = request.GET.get('servicepk', None)
 		if servicepk is None:
-			try:
-				services = PublicService.objects.all().order_by('-service__created')[:query_last]
-			except PublicService.DoesNotExist, e:
-				return Response(status=status.HTTP_404_NOT_FOUND)
-
+			services = PublicService.objects.all().order_by('-service__created')[:query_last]
 			serializer = PublicServiceSerializer(services, many=True)
-			return Response(serializer.data, status=status.HTTP_200_OK)
+			data = {'feed':serializer.data}
+			user = request.user
+			if user is not None:
+				bidon = PublicService.objects.filter(bid_set__bidder=user)
+				bidserializer = BidSerializer(bidon, many=True)
+				data.update({'bids':bidserializer.data})
+
+			return Response(data, status=status.HTTP_200_OK)
 		else:
 			service = self._get_object(servicepk)
 			serializer = PublicServiceSerializer(service)
