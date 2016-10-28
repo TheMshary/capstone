@@ -6,3 +6,4 @@
 app/migrations/*
 *.pyc
 project/local_settings.py
+.coverage
