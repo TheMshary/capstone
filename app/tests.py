@@ -35,14 +35,9 @@ class ProviderWorkingOnServicesTest(APITestCase):
 		self.user = user
 
 		# make 3 Offered Services
-		service = mommy.make(Service, providerpk=user.pk, status='active')
-		mommy.make(OfferedService, service=service)
-
-		service = mommy.make(Service, providerpk=user.pk, status='active')
-		mommy.make(OfferedService, service=service)
-
-		service = mommy.make(Service, providerpk=user.pk, status='active')
-		mommy.make(OfferedService, service=service)
+		services = mommy.make(Service, providerpk=user.pk, status='active', _quantity=3)
+		for service in services:
+			mommy.make(OfferedService, service=service)
 
 		# login
 		token = Token.objects.get(user__username='e')
@@ -69,14 +64,9 @@ class ProviderRequestedServicesTest(APITestCase):
 		self.user = user
 
 		# make 3 Offered Services
-		service = mommy.make(Service, providerpk=user.pk, status='pending')
-		mommy.make(OfferedService, service=service)
-
-		service = mommy.make(Service, providerpk=user.pk, status='pending')
-		mommy.make(OfferedService, service=service)
-
-		service = mommy.make(Service, providerpk=user.pk, status='pending')
-		mommy.make(OfferedService, service=service)
+		services = mommy.make(Service, providerpk=user.pk, status='pending', _quantity=3)
+		for service in services:
+			mommy.make(OfferedService, service=service)
 
 		# login
 		token = Token.objects.get(user__username='e')
@@ -103,22 +93,13 @@ class ProviderBidOnServicesTest(APITestCase):
 		self.user = user
 
 		# make 5 Public Services, two with bids KD4 and KD6
-		service = mommy.make(Service, providerpk=user.pk)
-		mommy.make(PublicService, service=service)
+		services = mommy.make(Service, providerpk=user.pk, _quantity=5)
+		for service in services[0:3]:
+			mommy.make(PublicService, service=service)
 
-		service = mommy.make(Service, providerpk=user.pk)
-		mommy.make(PublicService, service=service)
-
-		service = mommy.make(Service, providerpk=user.pk)
-		mommy.make(PublicService, service=service)
-
-		service = mommy.make(Service, providerpk=user.pk)
-		serv = mommy.make(PublicService, service=service)
-		mommy.make(Bid, service=serv, bid=4, bidder=user)
-
-		service = mommy.make(Service, providerpk=user.pk)
-		serv = mommy.make(PublicService, service=service)
-		mommy.make(Bid, service=serv, bid=6, bidder=user)
+		for service in services[3:5]:
+			serv = mommy.make(PublicService, service=service)
+			mommy.make(Bid, service=serv, bid=4, bidder=user)
 
 		# login
 		token = Token.objects.get(user__username='e')
@@ -145,7 +126,9 @@ class ProviderOfferedServicesTest(APITestCase):
 		user.profile.save()
 		self.pk = user.pk
 
-		mommy.make(OfferedService, service__providerpk=self.pk, _quantity=5)
+		services = mommy.make(Service, providerpk=self.pk, _quantity=5)
+		for serv in services:
+			mommy.make(OfferedService, service=serv)
 
 	def test_get(self):
 		url = '/offeredservice/provider/'
@@ -162,16 +145,15 @@ class ProviderResponseTest(APITestCase):
 	service = None
 
 	def setUp(self):
-		url = '/signup/'
+		# make account
 		username = 'testname'
 		password = 'whatevs'
 		usertype = 'seeker'
-		data = {
-			'username':username,
-			'password':password,
-			'usertype':usertype
-		}
-		self.client.post(url, data, format='json')
+		user = User.objects.create_user(username=username, password=password)
+		user.profile.usertype = usertype
+		user.profile.save()
+
+		# login
 		token = Token.objects.get(user__username=username)
 		# Include an appropriate 'Authorization:' header on all requests.
 		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
@@ -181,8 +163,9 @@ class ProviderResponseTest(APITestCase):
 		self.service = serv
 
 	def test_accept(self):
-		url = '/providerresponse/%s/' % self.service.pk
+		url = '/providerresponse/'
 		data = {
+			'pk': self.service.pk,
 			'response':'accept'
 		}
 		response = self.client.post(url, data, format='json')
@@ -191,8 +174,9 @@ class ProviderResponseTest(APITestCase):
 		self.assertEqual(self.service.status, 'Active')
 
 	def test_decline(self):
-		url = '/providerresponse/%s/' % self.service.pk
+		url = '/providerresponse/'
 		data = {
+			'pk':self.service.pk,
 			'response':'decline'
 		}
 		response = self.client.post(url, data, format='json')
@@ -201,8 +185,9 @@ class ProviderResponseTest(APITestCase):
 		self.assertEqual(self.service.status, 'Declined')
 
 	def test_bad_request(self):
-		url = '/providerresponse/%s/' % self.service.pk
+		url = '/providerresponse/'
 		data = {
+			'pk':self.service.pk,
 			'response':'kdjgnrekjg'
 		}
 		response = self.client.post(url, data, format='json')
@@ -215,16 +200,15 @@ class ProviderDoneTest(APITestCase):
 	service = None
 
 	def setUp(self):
-		url = '/signup/'
+		# make account
 		username = 'testname'
 		password = 'whatevs'
 		usertype = 'seeker'
-		data = {
-			'username':username,
-			'password':password,
-			'usertype':usertype
-		}
-		self.client.post(url, data, format='json')
+		user = User.objects.create_user(username=username, password=password)
+		user.profile.usertype = usertype
+		user.profile.save()
+
+		# login
 		token = Token.objects.get(user__username=username)
 		# Include an appropriate 'Authorization:' header on all requests.
 		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
@@ -233,8 +217,11 @@ class ProviderDoneTest(APITestCase):
 		self.service = serv
 
 	def test_done(self):
-		url = '/providerdone/%s/' % self.service.pk
-		response = self.client.post(url, format='json')
+		url = '/providerdone/'
+		data = {
+			'pk':self.service.pk,
+		}
+		response = self.client.post(url, data, format='json')
 		self.service = Service.objects.get(pk=self.service.pk)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(self.service.status, 'Done')
@@ -245,20 +232,18 @@ class BidResponseTest(APITestCase):
 	decline_bid = None
 
 	def setUp(self):
-		url = '/signup/'
+		# make account
 		username = 'testname'
 		password = 'whatevs'
 		usertype = 'seeker'
-		data = {
-			'username':username,
-			'password':password,
-			'usertype':usertype
-		}
-		self.client.post(url, data, format='json')
+		user = User.objects.create_user(username=username, password=password)
+		user.profile.usertype = usertype
+		user.profile.save()
+
+		# login
 		token = Token.objects.get(user__username=username)
 		# Include an appropriate 'Authorization:' header on all requests.
 		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
-
 
 		serv = mommy.make(Service)
 		pub = mommy.make(PublicService, service=serv)
@@ -266,14 +251,20 @@ class BidResponseTest(APITestCase):
 		self.decline_bid = mommy.make(Bid, service=pub, bid=5)
 
 	def test_accept(self):
-		url = '/acceptbid/%s/' % self.accept_bid.pk
-		response = self.client.post(url, format='json')
+		url = '/acceptbid/'
+		data = {
+			'pk':self.accept_bid.pk,
+		}
+		response = self.client.post(url, data, format='json')
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 	def test_decline(self):
-		url = '/declinebid/%s/' % self.decline_bid.pk
-		response = self.client.post(url, format='json')
+		url = '/declinebid/'
+		data = {
+			'pk':self.decline_bid.pk,
+		}
+		response = self.client.post(url, data, format='json')
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -284,50 +275,36 @@ class BidTest(APITestCase):
 	price = 6
 	bid = 7
 	bidpk = 0
+	user = None
 
 	def setUp(self):
-		url = '/signup/'
+		# make account
 		username = 'testname'
 		password = 'whatevs'
-		usertype = 'seeker'
-		data = {
-			'username':username,
-			'password':password,
-			'usertype':usertype
-		}
-		self.client.post(url, data, format='json')
+		usertype = 'provider'
+		user = User.objects.create_user(username=username, password=password)
+		user.profile.usertype = usertype
+		user.profile.save()
+		self.user = user
+		
+		# login
 		token = Token.objects.get(user__username=username)
 		# Include an appropriate 'Authorization:' header on all requests.
 		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
-
-		url2 = '/publicservice/'
-		data2 = {
-			'service': {
-				'title':self.title,
-				'description':self.description,
-				'price':self.price,
-			}
-		}
-		response = self.client.post(url2, data2, format='json')
-		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-		self.servicepk = response.data.get('id')
-
-		url3 = '/bid/%s/' % self.servicepk
-		data3 = {
-			'service':self.servicepk,
-			'bid': 3
-		}
-
-		response = self.client.post(url3, data3, format='json')
-		self.bidpk = response.data.get('id')
+		serv = mommy.make(Service, title=self.title, description=self.description, price=self.price)
+		pub = mommy.make(PublicService, service=serv)
+		bid = mommy.make(Bid, service=pub, bid=3)
+		
+		self.servicepk = pub.pk
+		self.bidpk = bid.pk
 
 	def test_create(self):
-		url = '/bid/%s/' % self.servicepk
+		url = '/bid/'
 		data = {
 			'service': self.servicepk,
-			'bid': 5
+			'bid': 5,
+			'bidder':self.user.pk
 		}
 
 		response = self.client.post(url, data, format='json')
@@ -335,9 +312,9 @@ class BidTest(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 	def test_create_400(self):
-		url = '/bid/%s/' % self.servicepk
+		url = '/bid/'
 		data = {
-			'service': self.servicepk,
+			'pk': self.servicepk,
 			'bid': 'a'
 		}
 
@@ -346,14 +323,18 @@ class BidTest(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_get(self):
-		url = '/bid/%s/' % self.servicepk
-		response = self.client.get(url, format='json')
+		url = '/bid/'
+		data = {
+			'pk':self.servicepk,
+		}
+		response = self.client.get(url, data, format='json')
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 	def test_update(self):
-		url = '/bid/%s/' % self.bidpk
+		url = '/bid/'
 		data = {
+			'pk':self.bidpk,
 			'service':self.servicepk,
 			'bid':self.bid
 		}
@@ -362,8 +343,9 @@ class BidTest(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 	def test_update_400(self):
-		url = '/bid/%s/' % self.bidpk
+		url = '/bid/'
 		data = {
+			'pk':self.bidpk,
 			'service':self.servicepk,
 			'bid':'sef'
 		}
@@ -372,8 +354,9 @@ class BidTest(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_update_404(self):
-		url = '/bid/%s/' % 242
+		url = '/bid/'
 		data = {
+			'pk':242,
 			'service':242,
 			'bid':self.bid
 		}
@@ -382,16 +365,18 @@ class BidTest(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 	def test_delete(self):
-		url = '/bid/%s/' % self.bidpk
-		url2 = '/bid/%s/' % self.servicepk
+		url = '/bid/'
+		data = {
+			'pk':self.bidpk,
+		}
 
-		res = self.client.get(url2, format='json')
-		before = len(res.data)
+		res = Bid.objects.filter(service__pk=self.servicepk)
+		before = len(res)
 
-		response = self.client.delete(url, format='json')
+		response = self.client.delete(url, data, format='json')
 
-		res = self.client.get(url2, format='json')
-		after = len(res.data)
+		res = Bid.objects.filter(service__pk=self.servicepk)
+		after = len(res)
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(before, after+1)
@@ -403,32 +388,23 @@ class PublicServiceTest(APITestCase):
 	price = 1337
 
 	def setUp(self):
-		url = '/signup/'
+		# make account
 		username = 'testname'
 		password = 'whatevs'
 		usertype = 'seeker'
-		data = {
-			'username':username,
-			'password':password,
-			'usertype':usertype
-		}
-		self.client.post(url, data, format='json')
+		user = User.objects.create_user(username=username, password=password)
+		user.profile.usertype = usertype
+		user.profile.save()
+
+		# login
 		token = Token.objects.get(user__username=username)
 		# Include an appropriate 'Authorization:' header on all requests.
 		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
-
-		url2 = '/publicservice/'
-		data2 = {
-			'service': {
-				'title':self.title,
-				'description':self.description,
-				'price':self.price,
-			}
-		}
-		response = self.client.post(url2, data2, format='json')
-
-		self.servicepk = response.data.get('id')
+		serv = mommy.make(Service, title=self.title, description=self.description, price=self.price)
+		pub = mommy.make(PublicService, service=serv)
+		
+		self.servicepk = pub.pk
 
 	def test_create(self):
 		url = '/publicservice/'
@@ -436,7 +412,7 @@ class PublicServiceTest(APITestCase):
 			'service': {
 				'title':'some title',
 				'description':'some description',
-				'price':3.14152965,
+				'price':3.14159265,
 			}
 		}
 		response = self.client.post(url, data, format='json')
@@ -463,9 +439,10 @@ class PublicServiceTest(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 	def test_update(self):
-		url = '/publicservice/%s/' % self.servicepk
+		url = '/publicservice/'
 		newdesc = 'this is the new fucking description yo'
 		data = {
+			'pk':self.servicepk,
 			'service':{
 				'description':newdesc
 			}
@@ -476,9 +453,10 @@ class PublicServiceTest(APITestCase):
 		self.assertEqual(response.data.get('service').get('description'), newdesc)
 
 	def test_update_invalid(self):
-		url = '/publicservice/%s/' % self.servicepk
+		url = '/publicservice/'
 		newprice = 'this is the new fucking price yo'
 		data = {
+			'pk':self.servicepk,
 			'service':{
 				'price':newprice
 			}
@@ -509,17 +487,20 @@ class PublicServiceTest(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 	def test_delete(self):
-		url = '/publicservice/%s/' % self.servicepk
+		url = '/publicservice/'
+		data = {
+			'pk':self.servicepk,
+		}
 		bids = mommy.make(Bid, _quantity=3)
 		publicserv = PublicService.objects.get(pk=self.servicepk)
 		publicserv.bid_set = bids
 
-		res = self.client.get('/publicservice/', format='json')
+		res = self.client.get(url, format='json')
 		before = len(res.data.get('feed'))
 
-		response = self.client.delete(url, format='json')
+		response = self.client.delete(url, data, format='json')
 
-		res = self.client.get('/publicservice/', format='json')
+		res = self.client.get(url, format='json')
 		after = len(res.data.get('feed'))
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -533,30 +514,23 @@ class OfferedServiceTest(APITestCase):
 	price = 5.9
 
 	def setUp(self):
-		url = '/signup/'
+		# make account
 		username = 'testname'
 		password = 'whatevs'
-		data = {
-			'username':username,
-			'password':password,
-			'usertype':'provider'
-		}
-		self.client.post(url, data, format='json')
+		usertype = 'provider'
+		user = User.objects.create_user(username=username, password=password)
+		user.profile.usertype = usertype
+		user.profile.save()
+
+		# login
 		token = Token.objects.get(user__username=username)
 		# Include an appropriate 'Authorization:' header on all requests.
 		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
+		serv = mommy.make(Service, title=self.title, description=self.description, price=self.price)
+		offered = mommy.make(OfferedService, service=serv)
 
-		url2 = '/offeredservice/'
-		data2 = {
-			'service': {
-				'description':self.description,
-				'title':self.title,
-				'price':self.price
-			}
-		}
-		response = self.client.post(url2, data2, format='json')
-		self.servicepk = response.data.get('id')
+		self.servicepk = offered.pk
 
 	def test_create(self):
 		url = '/offeredservice/'
@@ -715,21 +689,21 @@ class LoginTest(APITestCase):
 	providerpassword = "providerpass"
 
 	def setUp(self):
-		url = '/signup/'
-		data = {
-			'username':self.seekerusername,
-			'password':self.seekerpassword,
-			'usertype':'seeker'
-		}
-		response = self.client.post(url, data, format='json')
+		# make account
+		username = self.seekerusername
+		password = self.seekerpassword
+		usertype = 'seeker'
+		user = User.objects.create_user(username=username, password=password)
+		user.profile.usertype = usertype
+		user.profile.save()
 
-		url = '/signup/'
-		data = {
-			'username':self.providerusername,
-			'password':self.providerpassword,
-			'usertype':'provider'
-		}
-		response = self.client.post(url, data, format='json')
+		# make account
+		username = self.providerusername
+		password = self.providerpassword
+		usertype = 'provider'
+		user = User.objects.create_user(username=username, password=password)
+		user.profile.usertype = usertype
+		user.profile.save()
 
 	def test_signup_username_taken(self):
 		url = '/signup/'
@@ -802,16 +776,18 @@ class ProfileUpdateTest(APITestCase):
 	token = ''
 
 	def setUp(self):
-		url = "/signup/"
-		data = {
-			'username':'lolxDxD',
-			"password":"haha",
-			'usertype':'provider'
-		}
-		response = self.client.post(url, data, format='json')
-		user = User.objects.get(username='lolxDxD')
-		self.profile = user.profile
-		self.token = 'Token %s' % Token.objects.get(user=user).key
+		# make account
+		username = 'lolxDxD'
+		password = 'haha'
+		usertype = 'provider'
+		user = User.objects.create_user(username=username, password=password)
+		user.profile.usertype = usertype
+		user.profile.save()
+
+		# login
+		token = Token.objects.get(user__username=username)
+		# Include an appropriate 'Authorization:' header on all requests.
+		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
 	def test_update(self):
 		url = "/profile/"
@@ -847,16 +823,13 @@ class UserTypeTest(APITestCase):
 	usertype = "seeker"
 	
 	def setUp(self):
-		url = "/signup/"
-		data = {"username":self.username, "password":self.password, "usertype":self.usertype}
-		response = self.client.post(url, data, format="json")
-
-	# def test_create_account(self):
-	# 	url = "/signup/"
-	# 	data = {"username":self.username, "password":self.password, "usertype":self.usertype}
-	# 	response = self.client.post(url, data, format="json")
-
-	# 	self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+		# make account
+		username = self.username
+		password = self.password
+		usertype = self.usertype
+		user = User.objects.create_user(username=username, password=password)
+		user.profile.usertype = usertype
+		user.profile.save()
 
 	def test_usertype(self):
 		url = "/login/"

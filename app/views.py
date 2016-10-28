@@ -83,7 +83,8 @@ class AcceptBidView(APIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
-	def post(self, request, pk):
+	def post(self, request):
+		pk = request.data.get('pk')
 		bid = Bid.objects.get(pk=pk)
 
 		service = bid.service
@@ -114,7 +115,8 @@ class DeclineBidView(APIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
-	def post(self, request, pk):
+	def post(self, request):
+		pk = request.data.get('pk')
 		bid = Bid.objects.get(pk=pk)
 
 		bid.status = "declined"
@@ -131,7 +133,8 @@ class ProviderDoneView(APIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
-	def post(self, request, pk):
+	def post(self, request):
+		pk = request.data.get('pk')
 		service = Service.objects.get(pk=pk)
 		service.status = "Done"
 		service.save()
@@ -147,7 +150,8 @@ class ProviderResponseView(APIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
-	def post(self, request, pk):
+	def post(self, request):
+		pk = request.data.get('pk')
 		service = Service.objects.get(pk=pk)
 		response = request.data.get("response")
 
@@ -337,7 +341,8 @@ class PublicServiceView(APIView):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	@permission_classes((IsAuthenticated,))
-	def put(self, request, pk):
+	def put(self, request):
+		pk = request.data.get('pk')
 		service = self._get_object(pk)
 		serializer = PublicServiceSerializer(service, data=request.data)
 		if serializer.is_valid():
@@ -346,7 +351,8 @@ class PublicServiceView(APIView):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	@permission_classes((IsAuthenticated,))
-	def delete(self, request, pk):
+	def delete(self, request):
+		pk = request.data.get('pk')
 		service = self._get_object(pk)
 		for bid in service.bid_set.all():
 			bid.delete()
@@ -369,22 +375,27 @@ class BidView(APIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
-	def get(self, request, pk):
+	def get(self, request):
+		pk = request.GET.get('pk')
 		query_last = request.GET.get('query_last', None)
-		service = PublicService.objects.get(pk=pk)
+		try:
+			service = PublicService.objects.get(pk=pk)
+		except PublicService.DoesNotExist, e:
+			raise Http404
 		bids = Bid.objects.filter(service=service)[:query_last]
 		serializer = BidSerializer(bids, many=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
-	def post(self, request, pk):
+	def post(self, request):
 		data = request.data
-		serializer = BidSerializer(data=data, context={"service":pk})
+		serializer = BidSerializer(data=data)
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	def put(self, request, pk):
+	def put(self, request):
+		pk = request.data.get('pk')
 		bid = self._get_object(pk)
 		serializer = BidSerializer(bid, data=request.data)
 		if serializer.is_valid():
@@ -392,7 +403,8 @@ class BidView(APIView):
 			return Response(serializer.data, status=status.HTTP_200_OK)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	def delete(self, request, pk):
+	def delete(self, request):
+		pk = request.data.get('pk')
 		bid = self._get_object(pk)
 		bid.delete()
 		return Response(status=status.HTTP_200_OK)
@@ -413,7 +425,8 @@ class ServiceImagesView(APIView):
 	# permission_classes = (IsAuthenticated,)
 
 	@permission_classes((AllowAny,))
-	def get(self, request, pk):
+	def get(self, request):
+		pk = request.data.get('pk')
 		service = self._get_service(pk)
 		query_last = request.GET.get('query_last', None)
 		images = ServiceImage.objects.filter(service=service)[:query_last]
@@ -421,7 +434,8 @@ class ServiceImagesView(APIView):
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
 	@permission_classes((IsAuthenticated,))
-	def post(self, request, pk):
+	def post(self, request):
+		pk = request.data.get('pk')
 		service = self._get_service(pk)
 		data = request.data
 		serializer = ServiceImageSerializer(data=data, context={"service":service})
@@ -431,7 +445,8 @@ class ServiceImagesView(APIView):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	@permission_classes((IsAuthenticated,))
-	def delete(self, request, pk):
+	def delete(self, request):
+		pk = request.data.get('pk')
 		image = self._get_image(pk)
 		image.delete()
 		return Response(status=status.HTTP_200_OK)

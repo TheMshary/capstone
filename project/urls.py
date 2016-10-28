@@ -26,10 +26,10 @@ urlpatterns = [
 	url(r'^admin/', admin.site.urls),
 
 	# UNTESTED
-	url(r'^acceptbid/(?P<pk>[0-9]+)/', views.AcceptBidView.as_view()),
-	url(r'^declinebid/(?P<pk>[0-9]+)/', views.DeclineBidView.as_view()),
-	url(r'^providerdone/(?P<pk>[0-9]+)/', views.ProviderDoneView.as_view()),
-	url(r'^providerresponse/(?P<pk>[0-9]+)/', views.ProviderResponseView.as_view()),
+	url(r'^acceptbid/', views.AcceptBidView.as_view()),
+	url(r'^declinebid/', views.DeclineBidView.as_view()),
+	url(r'^providerdone/', views.ProviderDoneView.as_view()),
+	url(r'^providerresponse/', views.ProviderResponseView.as_view()),
 	url(r'^request/', views.RequestView.as_view()),
 	url(r'^provider/requests/$', views.ProviderRequestsView.as_view()),
 	url(r'^provider/workingon/$', views.ProviderWorkingOnView.as_view()),
@@ -48,14 +48,14 @@ urlpatterns = [
 	# POST:		Posts a public service.
 	# PUT:		Updates an existing public service.
 	url(r'^publicservice/$', views.PublicServiceView.as_view()),
-	url(r'^publicservice/(?P<pk>[0-9]+)/', views.PublicServiceView.as_view()),
+	url(r'^publicservice/', views.PublicServiceView.as_view()),
 
 	# Might be unecessary since bids are being sent back along with the
 	## public services they're under in /publicservice/
 	# GET:		Loads all bids from a public service.
 	# POST:		Posts a bid on a public service.
 	# PUT:		Update existing bid.
-	url(r'^bid/(?P<pk>[0-9]+)/', views.BidView.as_view()),
+	url(r'^bid/', views.BidView.as_view()),
 
 	# Unnecessary now, will be used later when saving actual image files
 	## only if it's more efficient to not load images in the offered
@@ -63,7 +63,7 @@ urlpatterns = [
 	# GET:		Loads images of an offered service.
 	# POST:		Posts an images on an offered service.
 	# DELETE:	Deletes an image from an offered service.
-	url(r'^offeredimages/(?P<pk>[0-9]+)/', views.ServiceImagesView.as_view()),
+	url(r'^offeredimages/', views.ServiceImagesView.as_view()),
 
 	# GET:		Loads profile info of the logged in user
 	# PUT:		Updates profile info of the logged in user
