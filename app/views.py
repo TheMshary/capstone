@@ -43,6 +43,22 @@ from app.serializers import (
 # Create your views here.
 
 
+class ProviderRequestsView(APIView):
+	"""
+	View for getting requested services of the logged in Provider
+	"""
+
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	def get(self, request):
+		services = OfferedService.objects.filter(service__status='pending', service__providerpk=request.user.pk)
+
+		serializer = OfferedServiceSerializer(services, many=True)
+
+		return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class AcceptBidView(APIView):
 	"""
 	Seeker accepting a bid

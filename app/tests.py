@@ -24,6 +24,40 @@ from model_mommy import mommy
 #======================== API TESTS ========================#
 
 
+class ProviderRequestedServicesTest(APITestCase):
+	user = None
+
+	def setUp(self):
+		# make Provider account
+		user = User.objects.create_user(username='e', password='f')
+		user.profile.usertype = 'provider'
+		user.profile.save()
+		self.user = user
+
+		# make 3 Offered Services
+		service = mommy.make(Service, providerpk=user.pk, status='pending')
+		mommy.make(OfferedService, service=service)
+
+		service = mommy.make(Service, providerpk=user.pk, status='pending')
+		mommy.make(OfferedService, service=service)
+
+		service = mommy.make(Service, providerpk=user.pk, status='pending')
+		mommy.make(OfferedService, service=service)
+
+		# login
+		token = Token.objects.get(user__username='e')
+		# Include an appropriate 'Authorization:' header on all requests.
+		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+	def test_get(self):
+		url = '/provider/requests/'
+		response = self.client.get(url, format='json')
+
+		count = len(response.data)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(count, 3)
+
+
 class ProviderBidOnServicesTest(APITestCase):
 	user = None
 
