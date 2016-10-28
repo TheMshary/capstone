@@ -24,6 +24,59 @@ from model_mommy import mommy
 #======================== API TESTS ========================#
 
 
+class ProviderResponseTest(APITestCase):
+	service = None
+
+	def setUp(self):
+		url = '/signup/'
+		username = 'testname'
+		password = 'whatevs'
+		usertype = 'seeker'
+		data = {
+			'username':username,
+			'password':password,
+			'usertype':usertype
+		}
+		self.client.post(url, data, format='json')
+		token = Token.objects.get(user__username=username)
+		# Include an appropriate 'Authorization:' header on all requests.
+		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+		serv = mommy.make(Service, status="pending")
+		offered = mommy.make(OfferedService, service=serv)
+		self.service = serv
+
+	def test_accept(self):
+		url = '/providerresponse/%s/' % self.service.pk
+		data = {
+			'response':'accept'
+		}
+		response = self.client.post(url, data, format='json')
+		self.service = Service.objects.get(pk=self.service.pk)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(self.service.status, 'Active')
+
+	def test_decline(self):
+		url = '/providerresponse/%s/' % self.service.pk
+		data = {
+			'response':'decline'
+		}
+		response = self.client.post(url, data, format='json')
+		self.service = Service.objects.get(pk=self.service.pk)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(self.service.status, 'Declined')
+
+	def test_bad_request(self):
+		url = '/providerresponse/%s/' % self.service.pk
+		data = {
+			'response':'kdjgnrekjg'
+		}
+		response = self.client.post(url, data, format='json')
+		self.service = Service.objects.get(pk=self.service.pk)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(self.service.status, 'pending')
+		self.assertEqual(response.data.get('msg'), "'response' can be either 'accept' or 'decline', spelt exactly that way.")
+
 class ProviderDoneTest(APITestCase):
 	service = None
 
@@ -147,6 +200,17 @@ class BidTest(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+	def test_create_400(self):
+		url = '/bid/%s/' % self.servicepk
+		data = {
+			'service': self.servicepk,
+			'bid': 'a'
+		}
+
+		response = self.client.post(url, data, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 	def test_get(self):
 		url = '/bid/%s/' % self.servicepk
 		response = self.client.get(url, format='json')
@@ -162,6 +226,26 @@ class BidTest(APITestCase):
 		response = self.client.put(url, data, format='json')
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_update_400(self):
+		url = '/bid/%s/' % self.bidpk
+		data = {
+			'service':self.servicepk,
+			'bid':'sef'
+		}
+		response = self.client.put(url, data, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+	def test_update_404(self):
+		url = '/bid/%s/' % 242
+		data = {
+			'service':242,
+			'bid':self.bid
+		}
+		response = self.client.put(url, data, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 	def test_delete(self):
 		url = '/bid/%s/' % self.bidpk
@@ -225,6 +309,19 @@ class PublicServiceTest(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+	def test_create_invalid(self):
+		url = '/publicservice/'
+		data = {
+			'service': {
+				'title':'some title',
+				'description':'some description',
+				'price':'qfwe  wefs',
+			}
+		}
+		response = self.client.post(url, data, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 	def test_get_list(self):
 		url = '/publicservice/'
 		response = self.client.get(url, format='json')
@@ -244,6 +341,18 @@ class PublicServiceTest(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(response.data.get('service').get('description'), newdesc)
 
+	def test_update_invalid(self):
+		url = '/publicservice/%s/' % self.servicepk
+		newprice = 'this is the new fucking price yo'
+		data = {
+			'service':{
+				'price':newprice
+			}
+		}
+		response = self.client.put(url, data, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 	def test_get_detailed(self):
 		url = '/publicservice/'
 		data = {
@@ -256,8 +365,21 @@ class PublicServiceTest(APITestCase):
 		self.assertEqual(response.data.get('service').get('description'), self.description)
 		self.assertEqual(response.data.get('service').get('price'), self.price)
 
+	def test_get_detailed_404(self):
+		url = '/publicservice/'
+		data = {
+			'servicepk':'43434'
+		}
+		response = self.client.get(url, data, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
 	def test_delete(self):
 		url = '/publicservice/%s/' % self.servicepk
+		bids = mommy.make(Bid, _quantity=3)
+		publicserv = PublicService.objects.get(pk=self.servicepk)
+		publicserv.bid_set = bids
+
 		res = self.client.get('/publicservice/', format='json')
 		before = len(res.data)
 
@@ -316,6 +438,19 @@ class OfferedServiceTest(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 		# self.servicepk = response.data.get('service').get('pk')
 
+	def test_create_invalid(self):
+		url = '/offeredservice/'
+		data = {
+			'service': {
+				'description':'some description here',
+				'title':'some title here',
+				'price':'a'
+			}
+		}
+		response = self.client.post(url, data, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 	def test_get_list(self):
 		url = '/offeredservice/'
 		response = self.client.get(url, format='json')
@@ -347,6 +482,19 @@ class OfferedServiceTest(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(response.data.get('service').get('description'), newdesc)
 
+	def test_update_invalid(self):
+		url = '/offeredservice/'
+		newprice = 'this is the new fucking description yo'
+		data = {
+			'servicepk': self.servicepk,
+			'service':{
+				'price':newprice
+			}
+		}
+		response = self.client.put(url, data, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 	# def test_get_list_related_to_provider(self):
 
 	# def test_get_list_related_to_provider_query_last(self):
@@ -362,6 +510,14 @@ class OfferedServiceTest(APITestCase):
 		self.assertEqual(response.data.get('service').get('title'), self.title)
 		self.assertEqual(response.data.get('service').get('description'), self.description)
 		self.assertEqual(response.data.get('service').get('price'), self.price)
+
+	# def test_get_detailed_404(self):
+	# 	url = '/offeredservice/'
+	# 	OfferedService.objects.all().delete()
+	# 	Service.objects.all().delete()
+	# 	response = self.client.get(url, format='json')
+
+	# 	self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 	def test_request(self):
 		url = '/request/'
@@ -380,6 +536,16 @@ class OfferedServiceTest(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(before, after-1)
 
+	def test_request_404(self):
+		url = '/request/'
+		data = {
+			'servicepk':'3425'
+		}
+
+		response = self.client.post(url, data, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
 	def test_delete(self):
 		url = '/offeredservice/'
 		data = {
@@ -395,6 +561,16 @@ class OfferedServiceTest(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(before, after+1)
+
+	def test_delete_404(self):
+		url = '/offeredservice/'
+		data = {
+			'servicepk': '34234',
+		}
+
+		response = self.client.delete(url, data, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class LoginTest(APITestCase):
@@ -420,6 +596,29 @@ class LoginTest(APITestCase):
 			'usertype':'provider'
 		}
 		response = self.client.post(url, data, format='json')
+
+	def test_signup_username_taken(self):
+		url = '/signup/'
+		data = {
+			'username':self.seekerusername,
+			'password':self.seekerpassword,
+			'usertype':'seeker'
+		}
+		response = self.client.post(url, data, format='json')
+
+		self.assertEqual(response.data.get("msg"), 'Username taken.')
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+	def test_signup_invalid(self):
+		url = '/signup/'
+		data = {
+			'username':'dfghjk',
+			'password':self.seekerpassword,
+			'usertype':'hgvmh'
+		}
+		response = self.client.post(url, data, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_seeker(self):
 		url = '/login/'
@@ -451,6 +650,18 @@ class LoginTest(APITestCase):
 		self.assertEqual(response.data.get('token'), token)
 		self.assertEqual(response.data.get('usertype'), 'provider')
 
+	def test_token_404(self):
+		url = '/login/'
+		Token.objects.get(user__username=self.providerusername).delete()
+		data = {
+			'username':self.providerusername,
+			'password':self.providerpassword
+		}
+		response = self.client.post(url, data, format='json')
+
+
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
 
 class ProfileUpdateTest(APITestCase):
 	profile = None
@@ -468,7 +679,6 @@ class ProfileUpdateTest(APITestCase):
 		self.profile = user.profile
 		self.token = 'Token %s' % Token.objects.get(user=user).key
 
-
 	def test_update(self):
 		url = "/profile/"
 		data = {
@@ -479,6 +689,17 @@ class ProfileUpdateTest(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(response.data.get('about'), 'new about')
+
+	def test_update_400(self):
+		url = "/profile/"
+		data = {
+			'usertype':3,
+			"about":6,
+			'email':4
+		}
+		response = self.client.put(url, data, HTTP_AUTHORIZATION=self.token)
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_get(self):
 		url = '/profile/'
@@ -739,6 +960,31 @@ class ProviderLogSerializerTest(APITestCase):
 		url = '/log/'
 		response = self.client.get(url)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+class FailLogSerializerTest(APITestCase):
+	services = []
+
+	def setUp(self):
+		username = 'testname2'
+		password = 'whatevs'
+
+		user = User.objects.create_user(username=username, password=password)
+		token = Token.objects.get(user=user)
+		# Profile.objects.create(user=user, usertype='prcovider')
+		user.profile.usertype = 'prcovider'
+		user.profile.save()
+		# Include an appropriate 'Authorization:' header on all requests.
+		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+		# self.services = mommy.make(Service, providerpk=user.pk, _quantity=10)
+		# for service in self.services:
+			# mommy.make(OfferedService, service=service)
+
+	def test_log(self):
+		url = '/log/'
+		response = self.client.get(url)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(response.data.get('msg'), "'usertype' is neither seeker nor provider.")
 
 
 

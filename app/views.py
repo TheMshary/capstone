@@ -43,10 +43,6 @@ from app.serializers import (
 # Create your views here.
 
 
-##############################
-########## UNTESTED ##########
-######## UNREFACTORED ########
-##############################
 class AcceptBidView(APIView):
 	"""
 	Seeker accepting a bid
@@ -75,14 +71,9 @@ class AcceptBidView(APIView):
 		service.status = "active"
 		service.save()
 
-
 		return Response(status=status.HTTP_200_OK)
 
 
-##############################
-########## UNTESTED ##########
-######## UNREFACTORED ########
-##############################
 class DeclineBidView(APIView):
 	"""
 	Seeker declining a bid
@@ -99,10 +90,7 @@ class DeclineBidView(APIView):
 
 		return Response(status=status.HTTP_200_OK)
 
-##############################
-########## UNTESTED ##########
-######## UNREFACTORED ########
-##############################
+
 class ProviderDoneView(APIView):
 	"""
 	Provider "Dones" the service they're working on
@@ -118,10 +106,7 @@ class ProviderDoneView(APIView):
 
 		return Response(status=status.HTTP_200_OK)
 
-##############################
-########## UNTESTED ##########
-######## UNREFACTORED ########
-##############################
+
 class ProviderResponseView(APIView):
 	"""
 	Provider can accept or decline a request for an Offered Service
@@ -146,10 +131,7 @@ class ProviderResponseView(APIView):
 
 		return Response(status=status.HTTP_200_OK)
 
-##############################
-########## UNTESTED ##########
-######## UNREFACTORED ########
-##############################
+
 class RequestView(APIView):
 	"""
 	View for requesting services
@@ -231,7 +213,7 @@ class OfferedServiceView(APIView):
 	def post(self, request):
 		providerpk = request.user.pk
 		data = request.data
-		data.get('service').update({"providerpk":providerpk})
+		data.get('service').update({"providerpk":providerpk, 'status':'available'})
 		serializer = OfferedServiceSerializer(data=data)
 		if serializer.is_valid():
 			serializer.save()
@@ -262,7 +244,25 @@ class OfferedServiceView(APIView):
 		try:
 			return OfferedService.objects.get(pk=pk)
 		except OfferedService.DoesNotExist, e:
-			return Response(status=status.HTTP_404_NOT_FOUND)
+			raise Http404
+
+
+class OfferedServiceOfProviderView(APIView):
+	"""
+	Offered Service listing (ordered by date created), from a certain Provider.
+	"""
+
+	authentication_classes = (TokenAuthentication,)
+	# permission_classes = (IsAuthenticated,)
+
+	@permission_classes((AllowAny,))
+	def get(self, request):
+		query_last = request.GET.get('query_last', None)
+		providerpk = request.GET.get('providerpk', None)
+		
+		services = OfferedService.objects.filter(service__providerpk=providerpk).order_by('-service__created')
+		serializer = OfferedServiceSerializer(services, many=True)
+		return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class PublicServiceView(APIView):
@@ -272,24 +272,6 @@ class PublicServiceView(APIView):
 
 	authentication_classes = (TokenAuthentication,)
 	# permission_classes = (IsAuthenticated,)
-
-	@permission_classes((AllowAny,))
-	def get(self, request):
-		query_last = request.GET.get('query_last', None)
-		servicepk = request.GET.get('servicepk', None)
-		if servicepk is None:
-			try:
-				services = OfferedService.objects.all().order_by('-service__created')[:query_last]
-			except OfferedService.DoesNotExist, e:
-				return Response(status=status.HTTP_404_NOT_FOUND)
-
-			serializer = OfferedServiceSerializer(services, many=True)
-			return Response(serializer.data, status=status.HTTP_200_OK)
-
-		else:
-			service = self._get_object(servicepk)
-			serializer = OfferedServiceSerializer(service)
-			return Response(serializer.data, status=status.HTTP_200_OK)
 
 	@permission_classes((AllowAny,))
 	def get(self, request):
@@ -325,7 +307,7 @@ class PublicServiceView(APIView):
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_200_OK)
-		return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	@permission_classes((IsAuthenticated,))
 	def delete(self, request, pk):
@@ -340,7 +322,7 @@ class PublicServiceView(APIView):
 		try:
 			return PublicService.objects.get(pk=pk)
 		except PublicService.DoesNotExist, e:
-			return Response(status=status.HTTP_404_NOT_FOUND)
+			raise Http404
 
 
 class BidView(APIView):
@@ -382,8 +364,8 @@ class BidView(APIView):
 	def _get_object(self, pk):
 		try:
 			return Bid.objects.get(pk=pk)
-		except PublicService.DoesNotExist, e:
-			return Response(status=status.HTTP_404_NOT_FOUND)
+		except Bid.DoesNotExist, e:
+			raise Http404
 
 
 class ServiceImagesView(APIView):
@@ -445,7 +427,6 @@ class LogView(APIView):
 		user = request.user
 		query_last = request.GET.get('query_last', None)
 		usertype = user.profile.usertype
-
 		if usertype == "seeker":
 			services = Service.objects.filter(seekerpk=user.pk)[:query_last]
 		elif usertype == "provider":
@@ -487,7 +468,7 @@ def token_request(request):
 def signup(request):
 	try:
 		User.objects.get(username=request.data.get("username"))
-		return HttpResponse("Username taken.", status=status.HTTP_400_BAD_REQUEST)
+		return Response({'msg':"Username taken."}, status=status.HTTP_400_BAD_REQUEST)
 	except User.DoesNotExist:
 		pass
 
@@ -496,17 +477,19 @@ def signup(request):
 	serializer = UserSerializer(data=request.data)
 	if serializer.is_valid():
 		user_instance = serializer.save()
+		if usertype != 'seeker' and usertype != 'provider':
+			return Response(status=status.HTTP_400_BAD_REQUEST)
 		user_instance.profile.usertype = usertype
 		user_instance.profile.save()
 
 		return Response(serializer.data, status=status.HTTP_201_CREATED)
-	return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
 @csrf_exempt
 def logout_view(request):
 	logout(request)
-	return HttpResponse("LOGGED OUT", status=status.HTTP_204_NO_CONTENT)
+	return Response({'msg':"LOGGED OUT"}, status=status.HTTP_204_NO_CONTENT)
 
 
