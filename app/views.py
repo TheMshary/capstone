@@ -43,6 +43,22 @@ from app.serializers import (
 # Create your views here.
 
 
+class ProviderWorkingOnView(APIView):
+	"""
+	View for getting active services of the logged in Provider
+	"""
+
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	def get(self, request):
+		services = OfferedService.objects.filter(service__status='active', service__providerpk=request.user.pk)
+
+		serializer = OfferedServiceSerializer(services, many=True)
+
+		return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class ProviderRequestsView(APIView):
 	"""
 	View for getting requested services of the logged in Provider

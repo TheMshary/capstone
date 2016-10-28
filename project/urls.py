@@ -32,6 +32,7 @@ urlpatterns = [
 	url(r'^providerresponse/(?P<pk>[0-9]+)/', views.ProviderResponseView.as_view()),
 	url(r'^request/', views.RequestView.as_view()),
 	url(r'^provider/requests/$', views.ProviderRequestsView.as_view()),
+	url(r'^provider/workingon/$', views.ProviderWorkingOnView.as_view()),
 
 	# GET:		Returns services associated with the logged in user.
 	url(r'^log/', views.LogView.as_view()),
