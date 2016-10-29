@@ -24,6 +24,42 @@ from model_mommy import mommy
 #======================== API TESTS ========================#
 
 
+class SearchTest(APITestCase):
+
+	def setUp(self):
+		info = [
+			('a', 'a', 1.0, 'pet'),
+			('b', 'b', 2.0, 'cleaning'),
+			('c', 'c', 2.5, 'real estate'),
+			('d', 'd', 3.5, 'pet')
+		]
+
+		# make 3 Provider accounts
+		for inf in info:
+			user = User.objects.create_user(username=inf[0], password=inf[1])
+			user.profile.usertype = 'provider'
+			user.profile.category = inf[3]
+			user.profile.save()
+			mommy.make(Rating, profile=user.profile, rate=inf[2])
+
+		# login
+		token = Token.objects.get(user__username='a')
+		# Include an appropriate 'Authorization:' header on all requests.
+		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+	def test_search(self):
+		url = '/search/'
+		data = {
+			'search':'pet',
+		}
+		response = self.client.post(url, data, format='json')
+
+		print '\n\nTEST.SEARCH RESPONSE.DATA: %s\n\n' % response.data
+
+		# self.assertTrue(isinstance(response.data.get(''), Profile))
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
 class ProviderWorkingOnServicesTest(APITestCase):
 	user = None
 

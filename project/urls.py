@@ -25,7 +25,6 @@ from app import views
 urlpatterns = [
 	url(r'^admin/', admin.site.urls),
 
-	# UNTESTED
 	url(r'^acceptbid/', views.AcceptBidView.as_view()),
 	url(r'^declinebid/', views.DeclineBidView.as_view()),
 	url(r'^providerdone/', views.ProviderDoneView.as_view()),
@@ -33,6 +32,7 @@ urlpatterns = [
 	url(r'^request/', views.RequestView.as_view()),
 	url(r'^provider/requests/$', views.ProviderRequestsView.as_view()),
 	url(r'^provider/workingon/$', views.ProviderWorkingOnView.as_view()),
+	url(r'^search/$', views.SearchView.as_view()),
 
 	# GET:		Returns services associated with the logged in user.
 	url(r'^log/', views.LogView.as_view()),

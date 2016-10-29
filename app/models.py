@@ -34,38 +34,6 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 #============================= PROVIDER PROFILE ==============================#
 
 class Profile(models.Model):
-	SEEKER = "seeker"
-	PROVIDER = "provider"
-	USERTYPE_CHOICES = (
-		(SEEKER, "Seeker"),
-		(PROVIDER, "Provider"),
-	)
-
-	user = models.OneToOneField(settings.AUTH_USER_MODEL)
-	usertype = models.CharField(max_length=10, choices=USERTYPE_CHOICES, default=SEEKER)
-	about = models.TextField(null=True, blank=True)
-	phone_number = models.CharField(max_length=100, null=True, blank=True)
-	email = models.EmailField(null=True, blank=True)
-	image = models.ImageField(upload_to="providers", null=True, blank=True)
-
-	country = models.CharField(max_length=100, null=True, blank=True)
-	area = models.CharField(max_length=100, null=True, blank=True)
-	street_address = models.CharField(max_length=100, null=True, blank=True)
-
-	def __unicode__(self):
-		return self.user.username
-
-
-class Rating(models.Model):
-	rate = models.FloatField(default=0.0)
-	profile = models.ForeignKey(Profile)
-
-	def __unicode__(self):
-		return self.rate
-
-#============================= BASE SERVICE MODEL ==============================#
-
-class Service(models.Model):
 	CLEANING = 'cleaning'
 	FOOD = 'food'
 	ERRANDS = 'errands'
@@ -83,6 +51,40 @@ class Service(models.Model):
 		(OTHER, 'Other'),
 	)
 
+	SEEKER = "seeker"
+	PROVIDER = "provider"
+	USERTYPE_CHOICES = (
+		(SEEKER, "Seeker"),
+		(PROVIDER, "Provider"),
+	)
+
+	created = models.DateTimeField(auto_now_add=True, null=True)
+	user = models.OneToOneField(settings.AUTH_USER_MODEL)
+	usertype = models.CharField(max_length=10, choices=USERTYPE_CHOICES, default=SEEKER)
+	about = models.TextField(null=True, blank=True)
+	phone_number = models.CharField(max_length=100, null=True, blank=True)
+	email = models.EmailField(null=True, blank=True)
+	image = models.ImageField(upload_to="providers", null=True, blank=True)
+
+	country = models.CharField(max_length=100, null=True, blank=True)
+	area = models.CharField(max_length=100, null=True, blank=True)
+	street_address = models.CharField(max_length=100, null=True, blank=True)
+	category = models.CharField(max_length=1337, choices=CATEGORY_CHOICES, default=OTHER)
+
+	def __unicode__(self):
+		return self.user.username
+
+
+class Rating(models.Model):
+	rate = models.FloatField(default=0.0)
+	profile = models.OneToOneField(Profile)
+
+	def __unicode__(self):
+		return self.rate
+
+#============================= BASE SERVICE MODEL ==============================#
+
+class Service(models.Model):
 	AVAILABLE = "available"
 	UNAVAILABLE = "unavailable"
 	PENDING = "pending"
@@ -110,7 +112,6 @@ class Service(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	seekerpk = models.IntegerField(null=True, blank=True)
 	providerpk = models.IntegerField(null=True, blank=True)
-	category = models.CharField(max_length=1337, choices=CATEGORY_CHOICES, default=OTHER)
 	# available Service Days/Hours (has default "any time")
 
 	is_special = models.BooleanField(default=False)
@@ -121,14 +122,50 @@ class Service(models.Model):
 #============================= SERVICE TYPES ==============================#
 
 class PublicService(models.Model):
+	CLEANING = 'cleaning'
+	FOOD = 'food'
+	ERRANDS = 'errands'
+	PET = 'pet'
+	REAL_ESTATE = 'real estate'
+	BEAUTY = 'beauty'
+	OTHER = 'other'
+	CATEGORY_CHOICES = (
+		(CLEANING, 'Cleaning'),
+		(FOOD, 'Food'),
+		(ERRANDS, 'Errands'),
+		(PET, 'Pet'),
+		(REAL_ESTATE, 'Real Estate'),
+		(BEAUTY, 'Beauty'),
+		(OTHER, 'Other'),
+	)
+
 	service = models.OneToOneField(Service, null=True)
+	category = models.CharField(max_length=1337, choices=CATEGORY_CHOICES, default=OTHER)
 
 	def __unicode__(self):
 		return self.service.title
 
 
 class OfferedService(models.Model):
+	CLEANING = 'cleaning'
+	FOOD = 'food'
+	ERRANDS = 'errands'
+	PET = 'pet'
+	REAL_ESTATE = 'real estate'
+	BEAUTY = 'beauty'
+	OTHER = 'other'
+	CATEGORY_CHOICES = (
+		(CLEANING, 'Cleaning'),
+		(FOOD, 'Food'),
+		(ERRANDS, 'Errands'),
+		(PET, 'Pet'),
+		(REAL_ESTATE, 'Real Estate'),
+		(BEAUTY, 'Beauty'),
+		(OTHER, 'Other'),
+	)
+
 	service = models.OneToOneField(Service, null=True)
+	category = models.CharField(max_length=1337, choices=CATEGORY_CHOICES, default=OTHER)
 
 	def __unicode__(self):
 		return self.service.title
@@ -137,9 +174,9 @@ class OfferedService(models.Model):
 
 class ServiceImage(models.Model):
 	image = models.ImageField(upload_to="offered", null=True)
-	# image = models.TextField(null=True)
 	name = models.CharField(max_length=9001, null=True)
 	service = models.ForeignKey(OfferedService, null=True)
+	created = models.DateTimeField(auto_now_add=True, null=True)
 
 	def __unicode__(self):
 		return "%s" % self.name
@@ -159,6 +196,7 @@ class Bid(models.Model):
 	bid = models.IntegerField(default=0.0)
 	bidder = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
 	status = models.CharField(max_length=101,choices=STATUS_CHOICES, default=PENDING)
+	created = models.DateTimeField(auto_now_add=True, null=True)
 
 	def __unicode__(self):
 		return self.bid

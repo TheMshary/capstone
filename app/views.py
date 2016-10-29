@@ -43,6 +43,22 @@ from app.serializers import (
 # Create your views here.
 
 
+class SearchView(APIView):
+	"""
+	View for searching Providers based on rating and/or category
+	"""
+
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	def post(self, request):
+		category = request.data.get('search')
+		providers = Profile.objects.filter(category=category).order_by('rating__rate')
+		serializer = ProfileSerializer(providers, many=True)
+
+		return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class ProviderWorkingOnView(APIView):
 	"""
 	View for getting active services of the logged in Provider
