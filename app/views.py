@@ -298,22 +298,25 @@ class OfferedServiceView(APIView):
 		except OfferedService.DoesNotExist, e:
 			raise Http404
 
-
-class lsdjnlisbnls(APIView):
-	"""
-	Offered Service listing (ordered by date created), from a certain Provider.
-	"""
-
-	authentication_classes = (TokenAuthentication,)
-	# permission_classes = (IsAuthenticated,)
-
-	@permission_classes((AllowAny,))
+class stuff(APIView):
 	def get(self, request):
-		return HttpResponse("HAHA lol, fixde it maybe? xD")
-		# providerpk = request.GET.get('providerpk', None)
-		# services = OfferedService.objects.filter(service__providerpk=providerpk, service__status='available').order_by('-service__created') #add status to query
-		# serializer = OfferedServiceSerializer(services, many=True)
-		# return Response(serializer.data, status=status.HTTP_200_OK)
+		return HttpResponse("hahahahahahahahahahahaah XDXDXDXDXDXDXDXD")
+
+# class OfferedServiceOfProviderView(APIView):
+# 	"""
+# 	Offered Service listing (ordered by date created), from a certain Provider.
+# 	"""
+
+# 	authentication_classes = (TokenAuthentication,)
+# 	# permission_classes = (IsAuthenticated,)
+
+# 	@permission_classes((AllowAny,))
+# 	def get(self, request):
+# 		return HttpResponse("HAHA lol, fixde it maybe? xD")
+# 		providerpk = request.GET.get('providerpk', None)
+# 		services = OfferedService.objects.filter(service__providerpk=providerpk, service__status='available').order_by('-service__created') #add status to query
+# 		serializer = OfferedServiceSerializer(services, many=True)
+# 		return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class PublicServiceView(APIView):

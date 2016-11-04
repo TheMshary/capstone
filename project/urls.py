@@ -36,13 +36,14 @@ urlpatterns = [
 
 	# GET:		Returns services associated with the logged in user.
 	url(r'^log/', views.LogView.as_view()),
+	url(r'^stuff/', views.stuff.as_view()),
 
 	# GET:		Loads offered services along with all it's images.
 	# POST:		Posts an offered service.
 	# PUT:		Updates an existing offered service.
 	# DELETE:	Deletes offered service and it's images.
 	url(r'^offeredservice/$', views.OfferedServiceView.as_view()),
-	url(r'^providerservices/$', views.lsdjnlisbnls.as_view()),
+	# url(r'^providerservices/$', views.lsdjnlisbnls.as_view()),
 
 	# GET:		Loads public services (with/without) their bids.
 	# POST:		Posts a public service.
