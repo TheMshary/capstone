@@ -228,6 +228,7 @@ class ProfileSerializer(serializers.Serializer):
 			"area": profile.area,
 			"street_address": profile.street_address,
 			"username": profile.user.username,
+			"pk": profile.user.pk,
 		}
 
 		return data
