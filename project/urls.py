@@ -42,7 +42,7 @@ urlpatterns = [
 	# PUT:		Updates an existing offered service.
 	# DELETE:	Deletes offered service and it's images.
 	url(r'^offeredservice/$', views.OfferedServiceView.as_view()),
-	url(r'^offeredserviceprovider/$', views.OfferedServiceOfProviderView.as_view()),
+	url(r'^providerservices/$', views.OfferedServiceOfProviderView.as_view()),
 
 	# GET:		Loads public services (with/without) their bids.
 	# POST:		Posts a public service.
