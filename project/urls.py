@@ -36,7 +36,7 @@ urlpatterns = [
 
 	# GET:		Returns services associated with the logged in user.
 	url(r'^log/', views.LogView.as_view()),
-	url(r'^stuff/', views.stuff.as_view()),
+	url(r'^stuff/', views.OfferedServiceOfProviderView.as_view()),
 
 	# GET:		Loads offered services along with all it's images.
 	# POST:		Posts an offered service.
