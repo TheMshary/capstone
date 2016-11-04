@@ -309,8 +309,8 @@ class OfferedServiceOfProviderView(APIView):
 
 	@permission_classes((AllowAny,))
 	def get(self, request):
-		providerpk = request.GET.get('providerpk', None)
 		return HttpResponse("HAHA lol, fixde it maybe? xD")
+		providerpk = request.GET.get('providerpk', None)
 		services = OfferedService.objects.filter(service__providerpk=providerpk, service__status='available').order_by('-service__created') #add status to query
 		serializer = OfferedServiceSerializer(services, many=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
