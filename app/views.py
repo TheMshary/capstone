@@ -299,7 +299,7 @@ class OfferedServiceView(APIView):
 			raise Http404
 
 
-class OfferedServiceOfProviderView(APIView):
+class lsdjnlisbnls(APIView):
 	"""
 	Offered Service listing (ordered by date created), from a certain Provider.
 	"""
@@ -310,10 +310,10 @@ class OfferedServiceOfProviderView(APIView):
 	@permission_classes((AllowAny,))
 	def get(self, request):
 		return HttpResponse("HAHA lol, fixde it maybe? xD")
-		providerpk = request.GET.get('providerpk', None)
-		services = OfferedService.objects.filter(service__providerpk=providerpk, service__status='available').order_by('-service__created') #add status to query
-		serializer = OfferedServiceSerializer(services, many=True)
-		return Response(serializer.data, status=status.HTTP_200_OK)
+		# providerpk = request.GET.get('providerpk', None)
+		# services = OfferedService.objects.filter(service__providerpk=providerpk, service__status='available').order_by('-service__created') #add status to query
+		# serializer = OfferedServiceSerializer(services, many=True)
+		# return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class PublicServiceView(APIView):
