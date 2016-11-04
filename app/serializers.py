@@ -186,7 +186,7 @@ class ProfileSerializer(serializers.Serializer):
 	# image = serializers.CharField(required=False)
 	usertype = serializers.CharField(required=False)
 
-	rating_set = RatingSerializer(many=True)
+	rating_set = RatingSerializer(many=True, required=False)
 	country = serializers.CharField(required=False)
 	area = serializers.CharField(required=False)
 	street_address = serializers.CharField(required=False)

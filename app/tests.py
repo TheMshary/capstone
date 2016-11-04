@@ -54,8 +54,6 @@ class SearchTest(APITestCase):
 		}
 		response = self.client.post(url, data, format='json')
 
-		print '\n\nTEST.SEARCH RESPONSE.DATA: %s\n\n' % response.data
-
 		# self.assertTrue(isinstance(response.data.get(''), Profile))
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
