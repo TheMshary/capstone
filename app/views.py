@@ -311,7 +311,7 @@ class OfferedServiceOfProviderView(APIView):
 	def get(self, request):
 		providerpk = request.GET.get('providerpk', None)
 		
-		services = OfferedService.objects.filter(service__providerpk=providerpk, status='available').order_by('-service__created') #add status to query
+		services = OfferedService.objects.filter(service__providerpk=providerpk, service__status='available').order_by('-service__created') #add status to query
 		serializer = OfferedServiceSerializer(services, many=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
