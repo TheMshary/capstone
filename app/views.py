@@ -265,10 +265,6 @@ class OfferedServiceView(APIView):
 	def post(self, request):
 		providerpk = request.user.pk
 		data = request.data
-		return HttpResponse("TITLE: %s" % data.get('service').get('title'))
-
-
-		
 		data.get('service').update({"providerpk":providerpk, 'status':'available'})
 		serializer = OfferedServiceSerializer(data=data)
 		if serializer.is_valid():
