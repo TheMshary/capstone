@@ -298,6 +298,7 @@ class OfferedServiceView(APIView):
 		except OfferedService.DoesNotExist, e:
 			raise Http404
 
+
 class OfferedServiceOfProviderView(APIView):
 	"""
 	Offered Service listing (ordered by date created), from a certain Provider.
@@ -309,25 +310,10 @@ class OfferedServiceOfProviderView(APIView):
 	@permission_classes((AllowAny,))
 	def get(self, request):
 		providerpk = request.GET.get('providerpk', None)
-		services = OfferedService.objects.filter(service__providerpk=providerpk, service__status='available').order_by('-service__created') #add status to query
+		services = OfferedService.objects.filter(service__providerpk=providerpk, service__status='available')
+																				.order_by('-service__created')
 		serializer = OfferedServiceSerializer(services, many=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
-
-# class OfferedServiceOfProviderView(APIView):
-# 	"""
-# 	Offered Service listing (ordered by date created), from a certain Provider.
-# 	"""
-
-# 	authentication_classes = (TokenAuthentication,)
-# 	# permission_classes = (IsAuthenticated,)
-
-# 	@permission_classes((AllowAny,))
-# 	def get(self, request):
-# 		return HttpResponse("HAHA lol, fixde it maybe? xD")
-# 		providerpk = request.GET.get('providerpk', None)
-# 		services = OfferedService.objects.filter(service__providerpk=providerpk, service__status='available').order_by('-service__created') #add status to query
-# 		serializer = OfferedServiceSerializer(services, many=True)
-# 		return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class PublicServiceView(APIView):
@@ -559,7 +545,7 @@ def signup(request):
 	if serializer.is_valid():
 		user_instance = serializer.save()
 		if usertype != 'seeker' and usertype != 'provider':
-			return Response(status=status.HTTP_400_BAD_REQUEST)
+			return Response({'msg':'Invalid usertype.'}, status=status.HTTP_400_BAD_REQUEST)
 		user_instance.profile.usertype = usertype
 		user_instance.profile.save()
 
