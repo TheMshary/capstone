@@ -228,9 +228,8 @@ class ProfileView(APIView):
 	def put(self, request):
 		profile = request.user.profile
 		data = request.data
-		return Response(data.get("category"), status=status.HTTP_400_BAD_REQUEST)
 
-		serializer = ProfileSerializer(profile, data=data)
+		serializer = ProfileSerializer(profile, data=data, context={"category":data.get("category")})
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_200_OK)
