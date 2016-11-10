@@ -226,6 +226,7 @@ class ProfileSerializer(serializers.Serializer):
 			"usertype": profile.usertype,
 			"country": profile.country,
 			"area": profile.area,
+			"category": profile.category,
 			"street_address": profile.street_address,
 			"username": profile.user.username,
 			"pk": profile.user.pk,

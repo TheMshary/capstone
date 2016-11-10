@@ -53,8 +53,8 @@ class SearchView(APIView):
 
 	def post(self, request):
 		category = request.data.get('search')
-		providers = Profile.objects.filter(category=category).order_by('rating__rate')
-		serializer = ProfileSerializer(providers, many=True)
+		profiles = Profile.objects.filter(category=category).order_by('rating__rate')
+		serializer = ProfileSerializer(profiles, many=True)
 
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
