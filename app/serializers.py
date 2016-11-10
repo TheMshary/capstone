@@ -206,6 +206,7 @@ class ProfileSerializer(serializers.Serializer):
 		# instance.rating = validated_data.get("rating", instance.rating)
 		instance.country = validated_data.get("country", instance.country)
 		instance.area = validated_data.get("area", instance.area)
+		instance.category = validated_data.get("category", instance.category)
 		instance.street_address = validated_data.get("street_address", instance.street_address)
 
 		instance.save()
