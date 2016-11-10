@@ -228,6 +228,8 @@ class ProfileView(APIView):
 	def put(self, request):
 		profile = request.user.profile
 		data = request.data
+		return Response(data.get("category"), status=status.HTTP_400_BAD_REQUEST)
+
 		serializer = ProfileSerializer(profile, data=data)
 		if serializer.is_valid():
 			serializer.save()
@@ -312,7 +314,7 @@ class OfferedServiceOfProviderView(APIView):
 		providerpk = request.GET.get('providerpk', None)
 		services = OfferedService.objects.filter(service__providerpk=providerpk, service__status='available')
 		services = services.order_by('-service__created')
-		
+
 		serializer = OfferedServiceSerializer(services, many=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
