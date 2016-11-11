@@ -48,7 +48,7 @@ urlpatterns = [
 	# POST:		Posts a public service.
 	# PUT:		Updates an existing public service.
 	url(r'^publicservice/$', views.PublicServiceView.as_view()),
-	url(r'^publicservice/', views.PublicServiceView.as_view()),
+	# url(r'^publicservice/', views.PublicServiceView.as_view()),
 
 	# Might be unecessary since bids are being sent back along with the
 	## public services they're under in /publicservice/
