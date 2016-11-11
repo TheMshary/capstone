@@ -207,7 +207,6 @@ class ProfileSerializer(serializers.Serializer):
 	street_address = serializers.CharField(required=False)
 
 	def update(self, instance, validated_data):
-		print validated_data
 		instance.about = validated_data.get("about", instance.about)
 		instance.phone_number = validated_data.get("phone_number", instance.phone_number)
 		instance.email = validated_data.get("email", instance.email)
@@ -222,7 +221,7 @@ class ProfileSerializer(serializers.Serializer):
 		# instance.rating = validated_data.get("rating", instance.rating)
 		instance.country = validated_data.get("country", instance.country)
 		instance.area = validated_data.get("area", instance.area)
-		instance.category = validated_data.get("category", instance.category)
+		instance.category = self.context.get("category", instance.category)
 		instance.street_address = validated_data.get("street_address", instance.street_address)
 
 		instance.save()

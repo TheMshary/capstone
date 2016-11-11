@@ -370,10 +370,10 @@ class BidTest(APITestCase):
 		data = {
 			'pk':self.bidpk,
 			'service':self.servicepk,
-			'bid':self.bid
+			'bid':"%s"%self.bid,
+			'bidder': self.user.pk
 		}
 		response = self.client.put(url, data, format='json')
-
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 	def test_update_400(self):
@@ -827,12 +827,14 @@ class ProfileUpdateTest(APITestCase):
 		url = "/profile/"
 		data = {
 			'usertype':'seeker',
-			"about":"new about"
+			"about":"new about",
+			'category':'errands'
 		}
 		response = self.client.put(url, data, HTTP_AUTHORIZATION=self.token)
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(response.data.get('about'), 'new about')
+		self.assertEqual(response.data.get('category'), 'errands')
 
 	def test_update_400(self):
 		url = "/profile/"
@@ -957,7 +959,7 @@ class BidModelTest(TestCase):
 	def test_whatever_creation(self):
 		w = self.bid
 		self.assertTrue(isinstance(w, Bid))
-		self.assertEqual(w.__unicode__(), w.bid)
+		self.assertEqual("%s"%w.__unicode__(), "%s"%w.bid)
 
 
 #======================== SERIALIZER TESTS ========================#

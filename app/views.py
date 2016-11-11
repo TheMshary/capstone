@@ -413,6 +413,7 @@ class BidView(APIView):
 
 	def post(self, request):
 		data = request.data
+		# data.update({'bidder':request.user})
 		serializer = BidSerializer(data=data)
 		if serializer.is_valid():
 			serializer.save()
@@ -420,9 +421,10 @@ class BidView(APIView):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	def put(self, request):
-		pk = request.data.get('pk')
+		data = request.data
+		pk = data.pop('pk')
 		bid = self._get_object(pk)
-		serializer = BidSerializer(bid, data=request.data)
+		serializer = BidSerializer(bid, data=data)
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_200_OK)
