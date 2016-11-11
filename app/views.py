@@ -6,7 +6,7 @@ import time
 from django.template import RequestContext
 from django.db import IntegrityError
 from django.http import HttpResponse, Http404
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_exempt
 
@@ -340,7 +340,7 @@ class PublicServiceView(APIView):
 			data = {'feed':serializer.data}
 
 			user = request.user
-			if user is not None:
+			if user is not AnonymousUser:
 				bidon = Bid.objects.filter(bidder=user)
 				services = []
 				for bid in bidon:
