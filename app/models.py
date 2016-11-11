@@ -199,7 +199,7 @@ class Bid(models.Model):
 	created = models.DateTimeField(auto_now_add=True, null=True)
 
 	def __unicode__(self):
-		return self.bid
+		return "%s" % self.bid
 
 
 
