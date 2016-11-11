@@ -321,6 +321,40 @@ class OfferedServiceOfProviderView(APIView):
 		serializer = OfferedServiceSerializer(services, many=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
+class pubsView(APIView):
+	permission_classes = (AllowAny,)
+
+	def get(self, request):
+		query_last = request.GET.get('query_last', None)
+		servicepk = request.GET.get('servicepk', None)
+		if servicepk is None:
+			services = PublicService.objects.all().order_by('-service__created')[:query_last]
+			serializer = PublicServiceSerializer(services, many=True)
+			data = {'feed':serializer.data}
+
+			user = request.user
+			if user is not AnonymousUser:
+				bidon = Bid.objects.filter(bidder=user)
+				services = []
+				for bid in bidon:
+					services.append(bid.service)
+
+				serviceserializer = PublicServiceProviderBidSerializer(bidon, many=True)
+
+				data.update({'bids':serviceserializer.data})
+			return Response(data, status=status.HTTP_200_OK)
+		else:
+			service = self._get_object(servicepk)
+			serializer = PublicServiceSerializer(service)
+			return Response(serializer.data, status=status.HTTP_200_OK)
+
+	def _get_object(self, pk):
+		try:
+			return PublicService.objects.get(pk=pk)
+		except PublicService.DoesNotExist, e:
+			raise Http404
+
+
 
 class PublicServiceView(APIView):
 	"""
