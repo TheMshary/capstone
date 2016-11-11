@@ -160,12 +160,12 @@ class ProviderOfferedServicesTest(APITestCase):
 		user.profile.save()
 		self.pk = user.pk
 
-		services = mommy.make(Service, providerpk=self.pk, _quantity=5)
+		services = mommy.make(Service, providerpk=self.pk, status="available", _quantity=5)
 		for serv in services:
 			mommy.make(OfferedService, service=serv)
 
 	def test_get(self):
-		url = '/offeredservice/provider/'
+		url = '/providerservices/'
 		data = {
 			'providerpk':self.pk
 		}
@@ -1127,7 +1127,29 @@ class FailLogSerializerTest(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 		self.assertEqual(response.data.get('msg'), "'usertype' is neither seeker nor provider.")
 
+class PublicServiceProviderBidSerializerTest(TestCase):
+	bid = None
 
+	def setUp(self):
+		url = '/signup/'
+		username = 'testname3'
+		password = 'whatevs'
+		data = {
+			'username':username,
+			'password':password,
+			'usertype':'provider'
+		}
+		response = self.client.post(url, data, format='json')
+
+		provider = User.objects.get(username=username)
+
+		service = mommy.make(PublicService, service=mommy.make(Service))
+		self.bid = mommy.make(Bid, service=service, bidder=provider)
+
+	def test_valid(self):
+		serializer = PublicServiceProviderBidSerializer(self.bid)
+
+		self.assertEqual(serializer.data.get('bid'), self.bid.bid)
 
 
 

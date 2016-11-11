@@ -35,9 +35,10 @@ from app.serializers import (
 	ServiceSerializer,
 	ServiceLogSerializer,
 	BidSerializer,
-	OfferedServiceSerializer, 
+	OfferedServiceSerializer,
+	PublicServiceProviderBidSerializer,
 	PublicServiceSerializer, 
-	ProfileSerializer, 
+	ProfileSerializer,
 )
 
 # Create your views here.
@@ -311,6 +312,9 @@ class OfferedServiceOfProviderView(APIView):
 	@permission_classes((AllowAny,))
 	def get(self, request):
 		providerpk = request.GET.get('providerpk', None)
+		if providerpk is None:
+			raise Http404
+
 		services = OfferedService.objects.filter(service__providerpk=providerpk, service__status='available')
 		services = services.order_by('-service__created')
 
@@ -334,13 +338,16 @@ class PublicServiceView(APIView):
 			services = PublicService.objects.all().order_by('-service__created')[:query_last]
 			serializer = PublicServiceSerializer(services, many=True)
 			data = {'feed':serializer.data}
+
 			user = request.user
 			if user is not None:
 				bidon = Bid.objects.filter(bidder=user)
 				services = []
 				for bid in bidon:
 					services.append(bid.service)
-				serviceserializer = PublicServiceSerializer(services, many=True)
+
+				serviceserializer = PublicServiceProviderBidSerializer(bidon, many=True)
+
 				data.update({'bids':serviceserializer.data})
 			return Response(data, status=status.HTTP_200_OK)
 		else:

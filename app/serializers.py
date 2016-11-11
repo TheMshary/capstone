@@ -142,6 +142,21 @@ class OfferedServiceSerializer(serializers.ModelSerializer):
 
 		return instance
 
+class PublicServiceProviderBidSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Bid
+		fields = '__all__'
+
+	def to_representation(self, bid):
+		service = bid.service
+		serializedservice = PublicServiceSerializer(service)
+		data = {
+			'bid':bid.bid
+		}
+		data.update(serializedservice.data)
+
+		return data
+
 
 class PublicServiceSerializer(serializers.ModelSerializer):
 	bid_set = BidSerializer(required=False,many=True)
