@@ -53,7 +53,7 @@ class SearchView(APIView):
 	permission_classes = (IsAuthenticated,)
 
 	def post(self, request):
-		category = request.data.get('search')
+		category = request.data.get('category')
 		profiles = Profile.objects.filter(category=category).order_by('rating__rate')
 		serializer = ProfileSerializer(profiles, many=True)
 
