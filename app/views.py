@@ -204,8 +204,8 @@ class RequestView(APIView):
 		# service.service.save(force_insert=True) # This is commented because it doesn't update the pk, and idk how to do that
 
 		serv = OfferedService.objects.create()
-		baseservice = Service.objects.create(offeredservice=serv)
-		
+		baseservice = Service.objects.create()
+
 		serv.service = baseservice
 		serv.category = service.category
 		
@@ -218,6 +218,9 @@ class RequestView(APIView):
 		serv.service.seekerpk = request.user.pk
 		serv.service.providerpk = service.service.providerpk
 		serv.service.is_special = service.service.is_special
+
+		for image in service.serviceimage_set:
+			ServiceImage.objects.create(service=serv, image=image, created=image.created)
 
 		serv.service.save()
 		serv.save()
