@@ -231,10 +231,10 @@ class RequestView(APIView):
 		##### /BAD CODE
 
 
-		serializer = OfferedServiceSerializer(serv)
-		serializer2 = OfferedServiceSerializer(data=serializer.data)
-		if serializer2.is_valid():
-			serializer2.save()
+		# serializer = OfferedServiceSerializer(serv)
+		# serializer2 = OfferedServiceSerializer(data=serializer.data)
+		# if serializer2.is_valid():
+		# 	serializer2.save()
 		return Response(status=status.HTTP_201_CREATED)
 
 
