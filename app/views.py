@@ -200,12 +200,29 @@ class RequestView(APIView):
 		except OfferedService.DoesNotExist, e:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
-		service.service.seekerpk = request.user.pk
-		service.service.status = "pending"
-
 		# the force_insert=True forces .save() to create a new instance (force SQL insert).
-		# service.service.save(force_insert=True)
-		serializer = OfferedServiceSerializer(service)
+		# service.service.save(force_insert=True) # This is commented because it doesn't update the pk, and idk how to do that
+
+		serv = OfferedService.objects.create()
+		baseservice = Service.objects.create(offeredservice=serv)
+		
+		serv.service = baseservice
+		serv.category = service.category
+		
+		serv.service.title = service.service.title
+		serv.service.description = service.service.description
+		serv.service.price = service.service.price
+		serv.service.status = "pending"
+		serv.service.due_date = service.service.due_date
+		serv.service.created = service.service.created
+		serv.service.seekerpk = request.user.pk
+		serv.service.providerpk = service.service.providerpk
+		serv.service.is_special = service.service.is_special
+
+		serv.service.save()
+		serv.save()
+
+		serializer = OfferedServiceSerializer(serv)
 		serializer2 = OfferedServiceSerializer(data=serializer.data)
 		if serializer2.is_valid():
 			serializer2.save()
