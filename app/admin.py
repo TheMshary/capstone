@@ -1,8 +1,9 @@
 from django.contrib import admin
-from app.models import Profile, Service, PublicService, OfferedService, ServiceImage, Bid
+from app.models import Profile, Rating, Service, PublicService, OfferedService, ServiceImage, Bid
 
 # Register your models here.
 admin.site.register(Profile)
+admin.site.register(Rating)
 admin.site.register(Service)
 admin.site.register(PublicService)
 admin.site.register(OfferedService)
