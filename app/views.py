@@ -219,7 +219,7 @@ class RequestView(APIView):
 		serv.service.providerpk = service.service.providerpk
 		serv.service.is_special = service.service.is_special
 
-		for image in service.serviceimage_set:
+		for image in ServiceImage.objects.filter(service=service):
 			ServiceImage.objects.create(service=serv, image=image, created=image.created)
 
 		serv.service.save()
