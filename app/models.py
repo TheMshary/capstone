@@ -80,7 +80,7 @@ class Rating(models.Model):
 	profile = models.OneToOneField(Profile)
 
 	def __unicode__(self):
-		return self.rate
+		return '%s' % self.rate
 
 #============================= BASE SERVICE MODEL ==============================#
 

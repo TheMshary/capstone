@@ -234,6 +234,7 @@ class ProfileSerializer(serializers.Serializer):
 		this function returns that JSON.
 		"""
 
+
 		data = {
 			"about": profile.about,
 			"phone_number": profile.phone_number,
@@ -245,6 +246,7 @@ class ProfileSerializer(serializers.Serializer):
 			"category": profile.category,
 			"street_address": profile.street_address,
 			"username": profile.user.username,
+			"rate": profile.rating.rate,
 			"pk": profile.user.pk,
 		}
 
