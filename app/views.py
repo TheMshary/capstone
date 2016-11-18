@@ -250,10 +250,7 @@ class OfferedServiceView(APIView):
 		query_last = request.GET.get('query_last', None)
 		servicepk = request.GET.get('servicepk', None)
 		if servicepk is None:
-			try:
-				services = OfferedService.objects.all().order_by('-service__created')[:query_last]
-			except OfferedService.DoesNotExist, e:
-				return Response(status=status.HTTP_404_NOT_FOUND)
+			services = OfferedService.objects.all().order_by('-service__created')[:query_last]
 
 			serializer = OfferedServiceSerializer(services, many=True)
 			return Response(serializer.data, status=status.HTTP_200_OK)
@@ -286,7 +283,7 @@ class OfferedServiceView(APIView):
 
 	@permission_classes((IsAuthenticated,))
 	def delete(self, request):
-		pk = request.data.get('servicepk', None)
+		pk = request.data.get('servicepk', 45)
 		service = self._get_object(pk)
 		for image in service.serviceimage_set.all():
 			image.delete()

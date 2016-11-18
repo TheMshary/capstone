@@ -193,7 +193,7 @@ class Bid(models.Model):
 		(DECLINED, "Declined"),
 	)
 	service = models.ForeignKey(PublicService)
-	bid = models.IntegerField(default=0.0)
+	bid = models.IntegerField(default=0)
 	bidder = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
 	status = models.CharField(max_length=101,choices=STATUS_CHOICES, default=PENDING)
 	created = models.DateTimeField(auto_now_add=True, null=True)
