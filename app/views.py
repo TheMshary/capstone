@@ -283,7 +283,7 @@ class OfferedServiceView(APIView):
 
 	@permission_classes((IsAuthenticated,))
 	def delete(self, request):
-		pk = request.data.get('servicepk', 45)
+		pk = request.data.get('servicepk', None)
 		service = self._get_object(pk)
 		for image in service.serviceimage_set.all():
 			image.delete()
