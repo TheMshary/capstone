@@ -203,6 +203,10 @@ class RequestView(APIView):
 		# the force_insert=True forces .save() to create a new instance (force SQL insert).
 		serv = Service.objects.create()
 		service.service.pk = serv.pk
+		serv = OfferedService.objects.create(service=serv)
+		service.pk = serv.pk
+
+		serv.service.delete()
 		serv.delete()
 		service.service.save(force_insert=True) # This is commented because it doesn't update the pk, and idk how to do that
 
@@ -231,11 +235,11 @@ class RequestView(APIView):
 		##### /BAD CODE
 
 
-		# serializer = OfferedServiceSerializer(serv)
+		serializer = OfferedServiceSerializer(service)
 		# serializer2 = OfferedServiceSerializer(data=serializer.data)
 		# if serializer2.is_valid():
 		# 	serializer2.save()
-		return Response(status=status.HTTP_201_CREATED)
+		return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class ProfileView(APIView):
