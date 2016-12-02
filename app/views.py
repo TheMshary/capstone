@@ -203,16 +203,16 @@ class RequestView(APIView):
 		# the force_insert=True forces .save() to create a new instance (force SQL insert).
 		serv = Service.objects.create()
 		service.service.pk = serv.pk
-		serv = OfferedService.objects.create(service=serv)
-		service.pk = serv.pk
+		serv2 = OfferedService.objects.create()
+		service.pk = serv2.pk
 
-		serv.service.delete()
 		serv.delete()
+		serv2.delete()
 		service.service.status = "pending"
 		service.service.seekerpk = request.user.pk
 		service.service.save(force_insert=True) # This is commented because it doesn't update the pk, and idk how to do that
 		service.save()
-		
+
 		##### BAD CODE
 		# serv = OfferedService.objects.create()
 		# baseservice = Service.objects.create()
