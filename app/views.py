@@ -354,8 +354,8 @@ class pubsView(APIView):
 	permission_classes = (AllowAny,)
 
 	def get(self, request):
-		query_last = request.data.get('query_last', None)
-		servicepk = request.data.get('servicepk', None)
+		query_last = request.GET.get('query_last', None) # parameters + JSON encoding = 500
+		servicepk = request.GET.get('servicepk', None)
 		if servicepk is None:
 			services = PublicService.objects.all().order_by('-service__created')[:query_last]
 			serializer = PublicServiceSerializer(services, many=True)
