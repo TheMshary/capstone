@@ -362,7 +362,7 @@ class pubsView(APIView):
 			data = {'feed':serializer.data}
 
 			user = request.user
-			if user.is_anonymous():
+			if user.is_anonymous():		# This is not working (based on the error logs), figure this out.
 				bidon = Bid.objects.filter(bidder=user)
 				services = []
 				for bid in bidon:
@@ -399,19 +399,20 @@ class PublicServiceView(APIView):
 		servicepk = request.GET.get('servicepk', None)
 		if servicepk is None:
 			services = PublicService.objects.all().order_by('-service__created')[:query_last]
-			serializer = PublicServiceSerializer(services, many=True)
-			data = {'feed':serializer.data}
 
 			user = request.user
 			if user is not AnonymousUser:
 				bidon = Bid.objects.filter(bidder=user)
-				services = []
-				for bid in bidon:
-					services.append(bid.service)
-
 				serviceserializer = PublicServiceProviderBidSerializer(bidon, many=True)
 
+				services = services.exclude(bid=Bid.objects.filter(bidder=provider))
+				serializer = PublicServiceSerializer(services, many=True)
+
+				data = {'feed':serializer.data}
 				data.update({'bids':serviceserializer.data})
+			else:
+				serializer = PublicServiceSerializer(services, many=True)
+				data = {'feed':serializer.data}
 			return Response(data, status=status.HTTP_200_OK)
 		else:
 			service = self._get_object(servicepk)
