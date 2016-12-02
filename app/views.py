@@ -204,6 +204,8 @@ class RequestView(APIView):
 		serv = Service.objects.create()
 		service.service.pk = serv.pk
 		serv2 = OfferedService.objects.create()
+		if serv2.pk == service.pk:
+			return Response("Fuck this shit.. damn this is bizarre")
 		service.pk = serv2.pk
 
 		serv.delete()
