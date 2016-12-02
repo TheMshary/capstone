@@ -405,7 +405,7 @@ class PublicServiceView(APIView):
 				bidon = Bid.objects.filter(bidder=user)
 				serviceserializer = PublicServiceProviderBidSerializer(bidon, many=True)
 
-				services = services.exclude(bid=Bid.objects.filter(bidder=provider))
+				services = services.exclude(bid=Bid.objects.filter(bidder=user))
 				serializer = PublicServiceSerializer(services, many=True)
 
 				data = {'feed':serializer.data}
