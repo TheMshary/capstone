@@ -599,7 +599,8 @@ def token_request(request):
 	usertype = user.profile.usertype
 	data = {
 		"token": token_string,
-		"usertype": usertype
+		"usertype": usertype,
+		"pk": user.pk
 	}
 	return Response(data, status=status.HTTP_200_OK)
 
