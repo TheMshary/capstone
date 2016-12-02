@@ -571,9 +571,9 @@ class LogView(APIView):
 		user = request.user
 		query_last = request.GET.get('query_last', None)
 		usertype = user.profile.usertype
-		return Response("gibbirish", status=status.HTTP_200_OK)
 		if usertype == "seeker":
 			try:
+				return Response("gibbirish", status=status.HTTP_200_OK)
 				services = Service.objects.filter(seekerpk=user.pk)[:query_last]
 			except Service.DoesNotExist, e:
 				return Response({"msg":"SORRY"}, status=status.HTTP_400_BAD_REQUEST)
