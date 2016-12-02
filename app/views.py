@@ -211,7 +211,7 @@ class RequestView(APIView):
 		service.service.status = "pending"
 		service.service.seekerpk = request.user.pk
 		service.service.save(force_insert=True) # This is commented because it doesn't update the pk, and idk how to do that
-		service.save()
+		service.save(force_insert=True)
 
 		##### BAD CODE
 		# serv = OfferedService.objects.create()
