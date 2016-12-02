@@ -575,12 +575,12 @@ class LogView(APIView):
 			try:
 				services = Service.objects.filter(seekerpk=user.pk)[:query_last]
 			except Service.DoesNotExist, e:
-				return Response("SORRY", status=status.HTTP_404_NOT_FOUND)
+				return Response({"msg":"SORRY"}, status=status.HTTP_404_NOT_FOUND)
 		elif usertype == "provider":
 			try:
 				services = Service.objects.filter(providerpk=user.pk)[:query_last]
 			except Service.DoesNotExist, e:
-				return Response("sorry", status=status.HTTP_404_NOT_FOUND)
+				return Response({"msg":"sorry"}, status=status.HTTP_404_NOT_FOUND)
 		else:
 			return Response({"msg": "'usertype' is neither seeker nor provider."}, status=status.HTTP_400_BAD_REQUEST)
 		
