@@ -204,8 +204,7 @@ class RequestView(APIView):
 		serv = Service.objects.create()
 		service.service.pk = serv.pk
 		serv2 = OfferedService.objects.create()
-		if serv2.pk == service.pk:
-			return Response("service: %s ---- serv2: %s" % (service.pk, serv2.pk))
+		return Response("service: %s ---- serv2: %s" % (service.pk, serv2.pk))
 		service.pk = serv2.pk
 
 		serv.delete()
