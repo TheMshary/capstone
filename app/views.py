@@ -568,6 +568,7 @@ class LogView(APIView):
 	permission_classes = (IsAuthenticated,)
 
 	def get(self, request):
+		return Response("gibbirish", status=status.HTTP_200_OK)
 		user = request.user
 		query_last = request.GET.get('query_last', None)
 		usertype = user.profile.usertype
@@ -575,12 +576,12 @@ class LogView(APIView):
 			try:
 				services = Service.objects.filter(seekerpk=user.pk)[:query_last]
 			except Service.DoesNotExist, e:
-				return Response({"msg":"SORRY"}, status=status.HTTP_404_NOT_FOUND)
+				return Response({"msg":"SORRY"}, status=status.HTTP_400_BAD_REQUEST)
 		elif usertype == "provider":
 			try:
 				services = Service.objects.filter(providerpk=user.pk)[:query_last]
 			except Service.DoesNotExist, e:
-				return Response({"msg":"sorry"}, status=status.HTTP_404_NOT_FOUND)
+				return Response({"msg":"sorry"}, status=status.HTTP_400_BAD_REQUEST)
 		else:
 			return Response({"msg": "'usertype' is neither seeker nor provider."}, status=status.HTTP_400_BAD_REQUEST)
 		
