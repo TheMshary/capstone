@@ -568,8 +568,8 @@ class LogView(APIView):
 	permission_classes = (IsAuthenticated,)
 
 	def get(self, request):
-		return Response("gibbirish", status=status.HTTP_200_OK)
 		user = request.user
+		return Response("gibbirish", status=status.HTTP_200_OK)
 		query_last = request.GET.get('query_last', None)
 		usertype = user.profile.usertype
 		if usertype == "seeker":
