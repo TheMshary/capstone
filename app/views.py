@@ -362,7 +362,7 @@ class pubsView(APIView):
 			data = {'feed':serializer.data}
 
 			user = request.user
-			if isinstance(user, AnonymousUser):
+			if user.is_anonymous():
 				bidon = Bid.objects.filter(bidder=user)
 				services = []
 				for bid in bidon:
