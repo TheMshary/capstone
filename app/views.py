@@ -574,7 +574,6 @@ class LogView(APIView):
 		if usertype == "seeker":
 			try:
 				services = Service.objects.filter(seekerpk=user.pk)[:query_last]
-				return Response("gibbirish", status=status.HTTP_200_OK)
 			except Service.DoesNotExist, e:
 				return Response({"msg":"SORRY"}, status=status.HTTP_400_BAD_REQUEST)
 		elif usertype == "provider":
@@ -586,6 +585,7 @@ class LogView(APIView):
 			return Response({"msg": "'usertype' is neither seeker nor provider."}, status=status.HTTP_400_BAD_REQUEST)
 		
 		serializer = ServiceLogSerializer(services, many=True)
+		return Response("gibbirish", status=status.HTTP_200_OK)
 		# serializer = ServiceSerializer(services, many=True)
 
 		return Response(serializer.data, status=status.HTTP_200_OK)
