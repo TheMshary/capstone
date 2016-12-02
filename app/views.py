@@ -570,8 +570,8 @@ class LogView(APIView):
 	def get(self, request):
 		user = request.user
 		query_last = request.GET.get('query_last', None)
-		return Response("gibbirish", status=status.HTTP_200_OK)
 		usertype = user.profile.usertype
+		return Response("gibbirish", status=status.HTTP_200_OK)
 		if usertype == "seeker":
 			try:
 				services = Service.objects.filter(seekerpk=user.pk)[:query_last]
