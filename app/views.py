@@ -589,7 +589,7 @@ class LogView(APIView):
 		# return Response("gibbirish", status=status.HTTP_200_OK)
 		# serializer = ServiceSerializer(services, many=True)
 
-		return Response(serializer, status=status.HTTP_200_OK)
+		return Response(serializer.data, status=status.HTTP_200_OK)
 
 #============================ ACCOUNTS-RELATED ============================#
 @api_view(["POST"])
