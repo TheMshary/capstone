@@ -128,7 +128,6 @@ class OfferedServiceSerializer(serializers.ModelSerializer):
 		return offeredservice
 
 
-	# DO THIS YOU LAZY FUCKSTARD
 	def update(self, instance, validated_data):
 		service = validated_data.get("service")
 
@@ -138,6 +137,8 @@ class OfferedServiceSerializer(serializers.ModelSerializer):
 		instance.service.save()
 
 		instance.category = validated_data.get("category", instance.category)
+		instance.from_datetime = validated_data.get("from_datetime", instance.from_datetime)
+		instance.to_datetime = validated_data.get("to_datetime", instance.to_datetime)
 		instance.save()
 
 		return instance
@@ -180,6 +181,7 @@ class PublicServiceSerializer(serializers.ModelSerializer):
 		instance.service.title = service.get("title", instance.service.title)
 		instance.service.description = service.get("description", instance.service.description)
 		instance.service.price = service.get("price", instance.service.price)
+		instance.service.due_date = service.get("due_date", instance.service.due_date)
 		instance.service.save()
 
 		instance.category = validated_data.get("category", instance.category)

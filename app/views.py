@@ -255,10 +255,14 @@ class ProfileView(APIView):
 	permission_classes = (IsAuthenticated,)
 
 	def get(self, request):
-		user = request.user
-		profile = user.profile
+		pk = request.data.get('pk', None)
+		if pk is None:
+			profile = request.user.profile
+		else:
+			profile = _get_profile(pk)
 		serializer = ProfileSerializer(profile)
 		return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 	def put(self, request):
 		profile = request.user.profile
@@ -270,6 +274,11 @@ class ProfileView(APIView):
 			return Response(serializer.data, status=status.HTTP_200_OK)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+	def _get_profile(self, pk):
+		try:
+			return Profile.objects.get(pk=pk)
+		except Profile.DoesNotExist, e:
+			raise Http404
 
 class OfferedServiceView(APIView):
 	"""
@@ -455,6 +464,72 @@ class PublicServiceView(APIView):
 		try:
 			return PublicService.objects.get(pk=pk)
 		except PublicService.DoesNotExist, e:
+			raise Http404
+
+
+class SpecialServiceView(APIView):
+	"""
+	Special Service listing (ordered by date created), creation, updating, and deletion.
+	"""
+
+	authentication_classes = (TokenAuthentication,)
+	# permission_classes = (IsAuthenticated,)
+
+	@permission_classes((IsAuthenticated,))
+	def get(self, request):
+		# query_last = request.GET.get('query_last', None)
+		servicepk = request.GET.get('servicepk', None)
+		# if servicepk is None:
+		# 	services = SpecialService.objects.all().order_by('-service__created')[:query_last]
+
+		# 	serializer = SpecialServiceSerializer(services, many=True)
+		# 	data = {'services':serializer.data}
+		# else:
+		service = self._get_object(servicepk)
+		serializer = SpecialServiceSerializer(service)
+		return Response(serializer.data, status=status.HTTP_200_OK)
+		
+
+	@permission_classes((IsAuthenticated,))
+	def post(self, request):
+		seekerpk = request.user.pk
+		data = request.data
+		providerpk = data.pop('providerpk')
+		stuffington_post = {
+			'seekerpk': seekerpk,
+			'providerpk': providerpk,
+			'is_special': True
+		}
+		serializer = SpecialServiceSerializer(data=data, context={"service": stuffington_post})
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+	@permission_classes((IsAuthenticated,))
+	def put(self, request):
+		pk = request.data.get('pk')
+		service = self._get_object(pk)
+		serializer = SpecialServiceSerializer(service, data=request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data, status=status.HTTP_200_OK)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+	@permission_classes((IsAuthenticated,))
+	def delete(self, request):
+		pk = request.data.get('pk')
+		service = self._get_object(pk)
+		for bid in service.bid_set.all():
+			bid.delete()
+		service.service.delete()
+		service.delete()
+		return Response(status=status.HTTP_200_OK)
+
+	def _get_object(self, pk):
+		try:
+			return SpecialService.objects.get(pk=pk)
+		except SpecialService.DoesNotExist, e:
 			raise Http404
 
 

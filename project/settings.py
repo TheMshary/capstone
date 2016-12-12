@@ -156,7 +156,7 @@ try:
 except ImportError:
 	pass
 
-
+DATETIME_INPUT_FORMATS = "%Y-%m-%d %H:%M"
 
 
 

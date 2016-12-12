@@ -109,11 +109,10 @@ class Service(models.Model):
 	description = models.TextField(default="No description available.")
 	price = models.FloatField(default=0.0)
 	status = models.CharField(max_length=100, choices=STATUS_CHOICES, null=True, blank=True, default=PENDING)
-	due_date = models.DateTimeField(null=True, blank=True)
+	due_date = models.DateTimeField(input_formats=settings.DATETIME_INPUT_FORMATS, null=True, blank=True)
 	created = models.DateTimeField(auto_now_add=True)
 	seekerpk = models.IntegerField(null=True, blank=True)
 	providerpk = models.IntegerField(null=True, blank=True)
-	# available Service Days/Hours (has default "any time")
 
 	is_special = models.BooleanField(default=False)
 
@@ -165,8 +164,36 @@ class OfferedService(models.Model):
 		(OTHER, 'Other'),
 	)
 
+	# SATURDAY = "saturday"
+	# SUNDAY = "sunday"
+	# MONDAY = "monday"
+	# TUESDAY = "tuesday"
+	# WEDNESDAY = "wednesday"
+	# THURSDAY = "thursday"
+	# FRIDAY = "friday"
+	# STATUS_CHOICES = (
+	# 	(SATURDAY, "Saturday"),
+	# 	(SUNDAY, "Sunday"),
+	# 	(MONDAY, "Monday"),
+	# 	(TUESDAY, "Tuesday"),
+	# 	(WEDNESDAY, "Wednesday"),
+	# 	(THURSDAY, "Thursday"),
+	# 	(FRIDAY, "Friday"),
+	# )
+
 	service = models.OneToOneField(Service, null=True)
 	category = models.CharField(max_length=1337, choices=CATEGORY_CHOICES, default=OTHER)
+	
+	from_datetime = models.DateTimeField(input_formats=settings.DATETIME_INPUT_FORMATS, default="0-0-0 0:0")
+	to_datetime = models.DateTimeField(input_formats=settings.DATETIME_INPUT_FORMATS, default="0-0-0 0:0")
+	
+	# # From this hour at this day
+	# weekday_from = models.IntegerField(choices=WEEKDAYS)
+	# from_hour = models.IntegerField(choices=range(1,25))
+
+	# # To this hour at this day
+ #    weekday_to = models.IntegerField(choices=WEEKDAYS)
+ #    to_hour = models.IntegerField(choices=range(1,25))
 
 	def __unicode__(self):
 		return self.service.title

@@ -33,6 +33,7 @@ urlpatterns = [
 	url(r'^provider/requests/$', views.ProviderRequestsView.as_view()),
 	url(r'^provider/workingon/$', views.ProviderWorkingOnView.as_view()),
 	url(r'^search/$', views.SearchView.as_view()),
+	url(r'^specialservice/$', views.SpecialServiceView.as_view()),
 
 	# GET:		Returns services associated with the logged in user.
 	url(r'^log/', views.LogView.as_view()),
