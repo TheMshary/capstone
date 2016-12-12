@@ -184,8 +184,8 @@ class OfferedService(models.Model):
 	service = models.OneToOneField(Service, null=True)
 	category = models.CharField(max_length=1337, choices=CATEGORY_CHOICES, default=OTHER)
 	
-	from_datetime = models.DateTimeField(default="0-0-0 0:0")
-	to_datetime = models.DateTimeField(default="0-0-0 0:0")
+	from_datetime = models.DateTimeField(null=True, blank=True)
+	to_datetime = models.DateTimeField(null=True, blank=True)
 	
 	# # From this hour at this day
 	# weekday_from = models.IntegerField(choices=WEEKDAYS)
