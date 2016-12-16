@@ -104,7 +104,7 @@ class ProviderRequestsView(APIView):
 
 		offered = []
 		for serv in offeredservices:
-			offered.add(serv.offeredservice)
+			offered.append(serv.offeredservice)
 
 		offeredserializer = OfferedServiceSerializer(offered, many=True)
 		specialserializer = ServiceSerializer(special, many=True)
