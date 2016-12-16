@@ -70,11 +70,22 @@ class ProviderWorkingOnView(APIView):
 	permission_classes = (IsAuthenticated,)
 
 	def get(self, request):
-		services = OfferedService.objects.filter(service__status='active', service__providerpk=request.user.pk)
+		services = Service.objects.filter(status='active', providerpk=request.user.pk)
 
-		serializer = OfferedServiceSerializer(services, many=True)
+		special = services.filter(is_special=True)
+		offered = services.exclude(offeredservice=None)
+		public = services.filter(offeredservice=None, is_special=False)
 
-		return Response(serializer.data, status=status.HTTP_200_OK)
+		offeredserializer = OfferedServiceSerializer(offered, many=True)
+		specialserializer = ServiceSerializer(special, many=True)
+		publicserializer = PublicServiceSerializer(public, many=True)
+
+		data = {
+			'special': specialserializer.data,
+			'offered': offeredserializer.data,
+			'public': publicserializer.data
+		}
+		return Response(data, status=status.HTTP_200_OK)
 
 
 class ProviderRequestsView(APIView):
