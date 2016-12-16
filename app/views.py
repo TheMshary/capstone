@@ -252,10 +252,10 @@ class ProfileView(APIView):
 	"""
 
 	authentication_classes = (TokenAuthentication,)
-	permission_classes = (AllowAny,)
+	permission_classes = (IsAuthenticated,)
 
 	def get(self, request):
-		pk = request.data.get('pk', None)
+		pk = request.GET.get('pk', None)
 		if pk is None:
 			profile = request.user.profile
 		else:
