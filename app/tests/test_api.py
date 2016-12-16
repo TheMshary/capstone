@@ -138,28 +138,47 @@ class ProviderBidOnServicesTest(APITestCase):
 
 
 class ProviderOfferedServicesTest(APITestCase):
-	pk = None
+	providerpk = None
+	seekerpk = None
+	servicepk = None
 
 	def setUp(self):
+		user = User.objects.create_user(username='f', password='g')
+		user.profile.usertype = 'seeker'
+		user.profile.save()
+		self.seekerpk = user.pk
+
 		user = User.objects.create_user(username='e', password='f')
 		user.profile.usertype = 'provider'
 		user.profile.save()
-		self.pk = user.pk
+		self.providerpk = user.pk
 
 		services = mommy.make(Service, providerpk=self.pk, status="available", _quantity=5)
 		for serv in services:
 			mommy.make(OfferedService, service=serv)
 
+		self.servicepk = services[0].offeredservice
+
 	def test_get(self):
 		url = '/providerservices/'
 		data = {
-			'providerpk':self.pk
+			'providerpk':self.providerpk
 		}
 		response = self.client.get(url, data, format='json')
 
-		count = len(OfferedService.objects.filter(service__providerpk=self.pk))
+		count = len(OfferedService.objects.filter(service__providerpk=self.providerpk))
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(len(response.data), count)
+
+	def test_request(self):
+		url = '/offeredservice/'
+		data = {
+			'servicepk':self.servicepk
+		}
+		response = self.client.post(url, data, format='json')
+
+		count = len(OfferedService.objects.filter(service__providerpk=self.pk))
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 class ProviderResponseTest(APITestCase):
 	service = None
