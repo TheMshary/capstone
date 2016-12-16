@@ -86,11 +86,19 @@ class ProviderRequestsView(APIView):
 	permission_classes = (IsAuthenticated,)
 
 	def get(self, request):
-		services = OfferedService.objects.filter(service__status='pending', service__providerpk=request.user.pk)
+		services = Service.objects.filter(status='pending', providerpk=request.user.pk)
 
-		serializer = OfferedServiceSerializer(services, many=True)
+		special = services.filter(is_special=True)
+		offered = services.exclude(offeredservice=None)
 
-		return Response(serializer.data, status=status.HTTP_200_OK)
+		offeredserializer = OfferedServiceSerializer(offered, many=True)
+		specialserializer = ServiceSerializer(special, many=True)
+
+		data = {
+			'special': specialserializer.data,
+			'offered': offeredserializer.data,
+		}
+		return Response(data, status=status.HTTP_200_OK)
 
 
 class AcceptBidView(APIView):
