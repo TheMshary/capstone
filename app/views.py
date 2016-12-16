@@ -312,7 +312,7 @@ class OfferedServiceView(APIView):
 		query_last = request.GET.get('query_last', None)
 		servicepk = request.GET.get('servicepk', None)
 		if servicepk is None:
-			services = OfferedService.objects.all().order_by('-service__created')[:query_last]
+			services = OfferedService.objects.filter(service__status="available").order_by('-service__created')[:query_last]
 
 			serializer = OfferedServiceSerializer(services, many=True)
 			return Response(serializer.data, status=status.HTTP_200_OK)
