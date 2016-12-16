@@ -206,6 +206,7 @@ class RequestView(APIView):
 		service = deepcopy(service)
 		service.pk = None
 		service.status = "pending"
+		service.seekerpk = request.user.pk
 		service.save()
 
 		# duplicate offered service object
