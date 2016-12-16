@@ -255,7 +255,7 @@ class ProfileView(APIView):
 	permission_classes = (AllowAny,)
 
 	def get(self, request):
-		pk = request.GET.get('pk', None)
+		pk = request.data.get('pk', None)
 		if pk is None:
 			profile = request.user.profile
 		else:
