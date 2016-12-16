@@ -177,8 +177,8 @@ class ProviderOfferedServicesTest(APITestCase):
 		}
 		response = self.client.post(url, data, format='json')
 
-		count = len(OfferedService.objects.filter(service__providerpk=self.pk))
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+		self.assertNotEqual(OfferedService.objects.get(service__status='pending'), None)
 
 class ProviderResponseTest(APITestCase):
 	service = None
