@@ -100,7 +100,11 @@ class ProviderRequestsView(APIView):
 		services = Service.objects.filter(status='pending', providerpk=request.user.pk)
 
 		special = services.filter(is_special=True)
-		offered = services.exclude(offeredservice=None)
+		offeredservices = services.exclude(offeredservice=None)
+
+		offered = []
+		for serv in offeredservices:
+			offered.add(serv.offeredservice)
 
 		offeredserializer = OfferedServiceSerializer(offered, many=True)
 		specialserializer = ServiceSerializer(special, many=True)
