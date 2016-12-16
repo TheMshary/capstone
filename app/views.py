@@ -1,6 +1,7 @@
 #============================= CORE IMPORTS =============================#
 import pprint
 import time
+from copy import deepcopy
 
 #============================ DJANGO IMPORTS ============================#
 from django.template import RequestContext
@@ -196,23 +197,41 @@ class RequestView(APIView):
 	def post(self, request):
 		pk = request.data.get('servicepk')
 		try:
-			service = OfferedService.objects.get(pk=pk)
+			offered = OfferedService.objects.get(pk=pk)
 		except OfferedService.DoesNotExist, e:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
-		# the force_insert=True forces .save() to create a new instance (force SQL insert).
-		serv = Service.objects.create()
-		service.service.pk = serv.pk
-		serv2 = OfferedService.objects.create()
-		return Response("service: %s ---- serv2: %s" % (service.pk, serv2.pk))
-		service.pk = serv2.pk
+		# duplicate the base service object and change status to 'pending'
+		service = offered.service
+		service = deepcopy(service)
+		service.pk = None
+		service.status = "pending"
+		service.save()
 
-		serv.delete()
-		serv2.delete()
-		service.service.status = "pending"
-		service.service.seekerpk = request.user.pk
-		service.service.save(force_insert=True) # This is commented because it doesn't update the pk, and idk how to do that
-		service.save(force_insert=True)
+		# duplicate offered service object
+		newoffered = deepcopy(offered)
+		newoffered.service = None
+		newoffered.pk = None
+		newoffered.save()
+		newoffered.service = service
+		newoffered.save()
+
+
+
+
+		# the force_insert=True forces .save() to create a new instance (force SQL insert).
+		# serv = Service.objects.create()
+		# service.service.pk = serv.pk
+		# serv2 = OfferedService.objects.create()
+		# # return Response("service: %s ---- serv2: %s" % (service.pk, serv2.pk))
+		# service.pk = serv2.pk
+
+		# serv.delete()
+		# serv2.delete()
+		# service.service.status = "pending"
+		# service.service.seekerpk = request.user.pk
+		# service.service.save(force_insert=True) # This is commented because it doesn't update the pk, and idk how to do that
+		# service.save(force_insert=True)
 
 		##### BAD CODE
 		# serv = OfferedService.objects.create()
@@ -239,7 +258,7 @@ class RequestView(APIView):
 		##### /BAD CODE
 
 
-		serializer = OfferedServiceSerializer(service)
+		serializer = OfferedServiceSerializer(newoffered)
 		# serializer2 = OfferedServiceSerializer(data=serializer.data)
 		# if serializer2.is_valid():
 		# 	serializer2.save()
@@ -262,7 +281,6 @@ class ProfileView(APIView):
 			profile = self._get_profile(pk)
 		serializer = ProfileSerializer(profile)
 		return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 	def put(self, request):
 		profile = request.user.profile

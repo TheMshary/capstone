@@ -27,12 +27,11 @@ class RatingTest(TestCase):
 
 	def setUp(self, username="tsty", password="psst"):
 		profile = User.objects.create_user(username=username, password=password).profile
-		self.rating = Rating.objects.create(profile=profile)
+		self.rating = profile.rating
 
 	def test_whatever_creation(self):
 		w = self.rating
 		self.assertTrue(isinstance(w, Rating))
-		self.assertEqual(w.__unicode__(), w.rate)		# this shit is bizarre as fuck (it's not, I just don't get Python?)
 
 class ServiceTest(TestCase):
 	service = None

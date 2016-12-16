@@ -6,6 +6,7 @@ from app.serializers import OfferedServiceSerializer
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from model_mommy import mommy
+from app.models import *
 
 #======================== API TESTS ========================#
 
@@ -25,8 +26,9 @@ class SearchTest(APITestCase):
 			user = User.objects.create_user(username=inf[0], password=inf[1])
 			user.profile.usertype = 'provider'
 			user.profile.category = inf[3]
+			user.profile.rating.rate = inf[2]
+			user.profile.rating.save()
 			user.profile.save()
-			mommy.make(Rating, profile=user.profile, rate=inf[2])
 
 		# login
 		token = Token.objects.get(user__username='a')
@@ -134,7 +136,7 @@ class ProviderBidOnServicesTest(APITestCase):
 		feedcount = len(response.data.get('feed'))
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(bidcount, 2)
-		self.assertEqual(feedcount, 5)
+		self.assertEqual(feedcount, 3)
 
 
 class ProviderOfferedServicesTest(APITestCase):
@@ -148,16 +150,21 @@ class ProviderOfferedServicesTest(APITestCase):
 		user.profile.save()
 		self.seekerpk = user.pk
 
+		# login
+		token = Token.objects.get(user__username='f')
+		# Include an appropriate 'Authorization:' header on all requests.
+		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
 		user = User.objects.create_user(username='e', password='f')
 		user.profile.usertype = 'provider'
 		user.profile.save()
 		self.providerpk = user.pk
 
-		services = mommy.make(Service, providerpk=self.pk, status="available", _quantity=5)
+		services = mommy.make(Service, providerpk=self.providerpk, status="available", _quantity=5)
 		for serv in services:
 			mommy.make(OfferedService, service=serv)
 
-		self.servicepk = services[0].offeredservice
+		self.servicepk = services[0].offeredservice.pk
 
 	def test_get(self):
 		url = '/providerservices/'
@@ -171,7 +178,7 @@ class ProviderOfferedServicesTest(APITestCase):
 		self.assertEqual(len(response.data), count)
 
 	def test_request(self):
-		url = '/offeredservice/'
+		url = '/request/'
 		data = {
 			'servicepk':self.servicepk
 		}
@@ -685,11 +692,12 @@ class OfferedServiceTest(APITestCase):
 		before = len(res.data)
 
 		response = self.client.post(url, data, format='json')
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
 
 		res = self.client.get('/offeredservice/', format='json')
 		after = len(res.data)
 
-		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(before, after-1)
 
 	def test_request_404(self):
