@@ -259,7 +259,7 @@ class ProfileView(APIView):
 		if pk is None:
 			profile = request.user.profile
 		else:
-			profile = _get_profile(pk)
+			profile = _get_profile(self, pk)
 		serializer = ProfileSerializer(profile)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
