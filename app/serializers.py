@@ -169,11 +169,14 @@ class PublicServiceSerializer(serializers.ModelSerializer):
 
 	def create(self, validated_data):
 		service_data = validated_data.pop('service')
-
 		service = Service.objects.create(**service_data)
-		publicservice = PublicService.objects.create(service=service, **validated_data)
+		
+		if service_data.get('is_special', None) is None:
+			publicservice = PublicService.objects.create(service=service, **validated_data)
 
-		return publicservice
+			return publicservice
+		else:
+			return service
 
 	def update(self, instance, validated_data):
 		service = validated_data.get("service")
