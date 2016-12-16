@@ -73,8 +73,18 @@ class ProviderWorkingOnView(APIView):
 		services = Service.objects.filter(status='active', providerpk=request.user.pk)
 
 		special = services.filter(is_special=True)
-		offered = services.exclude(offeredservice=None)
-		public = services.filter(offeredservice=None, is_special=False)
+		offeredservices = services.exclude(offeredservice=None)
+
+		offered = []
+		for serv in offeredservices:
+			offered.append(serv.offeredservice)
+
+		publicservices = services.filter(offeredservice=None, is_special=False)
+
+		public = []
+		for serv in publicservices:
+			public.append(serv.publicservice)
+			
 
 		offeredserializer = OfferedServiceSerializer(offered, many=True)
 		specialserializer = ServiceSerializer(special, many=True)
