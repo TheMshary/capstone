@@ -489,7 +489,7 @@ class PublicServiceView(APIView):
 		# If not, then do the code block for a public service, it's already written below...
 		seekerpk = request.user.pk
 		data = request.data
-		data.update({"service":{"seekerpk": seekerpk}})
+		data.get('service').update({"seekerpk": seekerpk})
 		serializer = PublicServiceSerializer(data=data)
 		if serializer.is_valid():
 			serializer.save()
