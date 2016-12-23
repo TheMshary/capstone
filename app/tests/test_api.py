@@ -35,7 +35,7 @@ class SearchTest(APITestCase):
 		# Include an appropriate 'Authorization:' header on all requests.
 		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
-	def test_search(self):
+	def test_search(self):	#documented
 		url = '/search/'
 		data = {
 			'search':'pet',
@@ -66,7 +66,7 @@ class ProviderWorkingOnServicesTest(APITestCase):
 		# Include an appropriate 'Authorization:' header on all requests.
 		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
-	def test_get(self):
+	def test_get(self):	#documented
 		url = '/provider/workingon/'
 		response = self.client.get(url, format='json')
 
@@ -95,7 +95,7 @@ class ProviderRequestedServicesTest(APITestCase):
 		# Include an appropriate 'Authorization:' header on all requests.
 		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
-	def test_get(self):
+	def test_get(self):	#documented
 		url = '/provider/requests/'
 		response = self.client.get(url, format='json')
 
@@ -166,7 +166,7 @@ class ProviderOfferedServicesTest(APITestCase):
 
 		self.servicepk = services[0].offeredservice.pk
 
-	def test_get(self):
+	def test_get(self):	#documented
 		url = '/providerservices/'
 		data = {
 			'providerpk':self.providerpk
@@ -177,7 +177,7 @@ class ProviderOfferedServicesTest(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(len(response.data), count)
 
-	def test_request(self):
+	def test_request(self):	#documented
 		url = '/request/'
 		data = {
 			'servicepk':self.servicepk
@@ -185,7 +185,7 @@ class ProviderOfferedServicesTest(APITestCase):
 		response = self.client.post(url, data, format='json')
 
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-		self.assertNotEqual(OfferedService.objects.get(service__status='pending'), None)
+		self.assertNotEqual(OfferedService.objects.get(service__status='pending'), None) # self.asserNotEqual(...filter(...), [])
 
 class ProviderResponseTest(APITestCase):
 	service = None
@@ -208,7 +208,7 @@ class ProviderResponseTest(APITestCase):
 		offered = mommy.make(OfferedService, service=serv)
 		self.service = serv
 
-	def test_accept(self):
+	def test_accept(self):	#documented
 		url = '/providerresponse/'
 		data = {
 			'pk': self.service.pk,
@@ -219,7 +219,7 @@ class ProviderResponseTest(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(self.service.status, 'Active')
 
-	def test_decline(self):
+	def test_decline(self):	#documented
 		url = '/providerresponse/'
 		data = {
 			'pk':self.service.pk,
@@ -262,7 +262,7 @@ class ProviderDoneTest(APITestCase):
 		serv = mommy.make(Service)
 		self.service = serv
 
-	def test_done(self):
+	def test_done(self):	#documented
 		url = '/providerdone/'
 		data = {
 			'pk':self.service.pk,
@@ -296,7 +296,7 @@ class BidResponseTest(APITestCase):
 		self.accept_bid = mommy.make(Bid, service=pub, bid=4)
 		self.decline_bid = mommy.make(Bid, service=pub, bid=5)
 
-	def test_accept(self):
+	def test_accept(self):	#documented
 		url = '/acceptbid/'
 		data = {
 			'pk':self.accept_bid.pk,
@@ -305,7 +305,7 @@ class BidResponseTest(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-	def test_decline(self):
+	def test_decline(self):	#documented
 		url = '/declinebid/'
 		data = {
 			'pk':self.decline_bid.pk,
@@ -345,7 +345,7 @@ class BidTest(APITestCase):
 		self.servicepk = pub.pk
 		self.bidpk = bid.pk
 
-	def test_create(self):
+	def test_create(self):	#documented
 		url = '/bid/'
 		data = {
 			'service': self.servicepk,
@@ -386,7 +386,7 @@ class BidTest(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-	def test_update(self):
+	def test_update(self):	#documented
 		url = '/bid/'
 		data = {
 			'pk':self.bidpk,
@@ -419,7 +419,7 @@ class BidTest(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-	def test_delete(self):
+	def test_delete(self):	#documented
 		url = '/bid/'
 		data = {
 			'pk':self.bidpk,
@@ -461,7 +461,7 @@ class PublicServiceTest(APITestCase):
 		
 		self.servicepk = pub.pk
 
-	def test_create(self):
+	def test_create(self):	#documented
 		url = '/publicservice/'
 		data = {
 			'service': {
@@ -487,13 +487,13 @@ class PublicServiceTest(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-	def test_get_list(self):
+	def test_get_list(self):	#documented
 		url = '/publicservice/'
 		response = self.client.get(url, format='json')
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-	def test_update(self):
+	def test_update(self):	#documented
 		url = '/publicservice/'
 		newdesc = 'this is the new fucking description yo'
 		data = {
@@ -541,7 +541,7 @@ class PublicServiceTest(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-	def test_delete(self):
+	def test_delete(self):	#documented
 		url = '/publicservice/'
 		data = {
 			'pk':self.servicepk,
@@ -587,7 +587,7 @@ class OfferedServiceTest(APITestCase):
 
 		self.servicepk = offered.pk
 
-	def test_create(self):
+	def test_create(self):	#documented
 		url = '/offeredservice/'
 		data = {
 			'service': {
@@ -631,7 +631,7 @@ class OfferedServiceTest(APITestCase):
 	# 	self.assertEqual(response.status_code, status.HTTP_200_OK)
 	# 	self.assertEqual(len(response.data), query_last)
 
-	def test_update(self):
+	def test_update(self):	#documented
 		url = '/offeredservice/'
 		newdesc = 'this is the new fucking description yo'
 		data = {
@@ -761,7 +761,7 @@ class LoginTest(APITestCase):
 		user.profile.usertype = usertype
 		user.profile.save()
 
-	def test_signup_username_taken(self):
+	def test_signup_username_taken(self):	#documented
 		url = '/signup/'
 		data = {
 			'username':self.seekerusername,
@@ -773,7 +773,7 @@ class LoginTest(APITestCase):
 		self.assertEqual(response.data.get("msg"), 'Username taken.')
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-	def test_signup_invalid(self):
+	def test_signup_invalid(self):	#documented
 		url = '/signup/'
 		data = {
 			'username':'dfghjk',
@@ -784,7 +784,7 @@ class LoginTest(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-	def test_seeker(self):
+	def test_seeker(self):	#documented
 		url = '/login/'
 		data = {
 			'username':self.seekerusername,
@@ -799,7 +799,7 @@ class LoginTest(APITestCase):
 		self.assertEqual(response.data.get('token'), token)
 		self.assertEqual(response.data.get('usertype'), 'seeker')
 
-	def test_provider(self):
+	def test_provider(self):	#documented
 		url = '/login/'
 		data = {
 			'username':self.providerusername,
@@ -845,7 +845,7 @@ class ProfileUpdateTest(APITestCase):
 		# Include an appropriate 'Authorization:' header on all requests.
 		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
-	def test_update(self):
+	def test_update(self):	#documented
 		url = "/profile/"
 		data = {
 			'usertype':'seeker',
