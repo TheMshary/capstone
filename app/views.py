@@ -213,9 +213,9 @@ class ProviderResponseView(APIView):
 		response = request.data.get("response")
 
 		if response == "accept":
-			service.status = "Active"
+			service.status = "active"
 		elif response == "decline":	
-			service.status = "Declined"
+			service.status = "declined"
 		else:
 			return Response({"msg": "'response' can be either 'accept' or 'decline', spelt exactly that way."},
 							status=status.HTTP_400_BAD_REQUEST)
