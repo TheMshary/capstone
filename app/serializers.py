@@ -88,7 +88,12 @@ class ServiceLogSerializer(serializers.Serializer):
 					"type": "public",
 				}
 			except PublicService.DoesNotExist, e:
-				raise Http404
+				special = service
+				
+				servicedata = {
+					"id": special.pk,
+					"type": "special",
+				}
 
 		data.update(servicedata)
 		return data
