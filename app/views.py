@@ -447,6 +447,28 @@ class pubsView(APIView):
 			raise Http404
 
 
+class SpecialServiceView(APIView):
+	"""
+	Public Service listing (ordered by date created), creation, updating, and deletion.
+	"""
+
+	authentication_classes = (TokenAuthentication,)
+	permission_classes = (IsAuthenticated,)
+
+	# @permission_classes((AllowAny,))
+	def get(self, request):
+		pk = request.GET.get('pk', None)
+		service = self._get_object(pk)
+		serializer = SpecialServiceSerializer(service)
+		return Response(serializer.data, status=status.HTTP_200_OK)
+
+	def _get_object(self, pk):
+		try:
+			return Service.objects.get(pk=pk)
+		except Service.DoesNotExist, e:
+			raise Http404
+
+
 
 class PublicServiceView(APIView):
 	"""
@@ -576,16 +598,13 @@ class SpecialServiceView(APIView):
 	def delete(self, request):
 		pk = request.data.get('pk')
 		service = self._get_object(pk)
-		for bid in service.bid_set.all():
-			bid.delete()
-		service.service.delete()
 		service.delete()
 		return Response(status=status.HTTP_200_OK)
 
 	def _get_object(self, pk):
 		try:
-			return SpecialService.objects.get(pk=pk)
-		except SpecialService.DoesNotExist, e:
+			return Service.objects.get(pk=pk)
+		except Service.DoesNotExist, e:
 			raise Http404
 
 
