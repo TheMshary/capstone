@@ -187,7 +187,7 @@ class ProviderDoneView(APIView):
 	def post(self, request):
 		pk = request.data.get('pk')
 		service = self._get_service(pk)
-		service.status = "Done"
+		service.status = "done"
 		service.save()
 
 		return Response(status=status.HTTP_200_OK)
@@ -217,12 +217,12 @@ class ProviderResponseView(APIView):
 		elif response == "decline":	
 			service.status = "declined"
 		else:
-			return Response({"msg": "'response' can be either 'accept' or 'decline', spelt exactly that way."},
+			return Response({"msg": "'response' can be either 'accept' or 'decline', spelled exactly that way."},
 							status=status.HTTP_400_BAD_REQUEST)
 
 		service.save()
 
-		return Response({"action":response}, status=status.HTTP_200_OK)
+		return Response(status=status.HTTP_200_OK)
 
 	def _get_service(self, pk):
 		try:
