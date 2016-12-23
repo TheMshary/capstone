@@ -73,55 +73,71 @@ class ServiceLogSerializer(serializers.Serializer):
 		# 	'seeker': seeker,
 		# }
 
-		# try:
-		# 	offered = service.offeredservice
-		# 	servicedata = {
-		# 		"id": offered.pk,
-		# 		"type": "offered",
-		# 	}
-		# except OfferedService.DoesNotExist, e:
-		# 	try:
-		# 		public = service.publicservice
-				
-		# 		servicedata = {
-		# 			"id": public.pk,
-		# 			"type": "public",
-		# 		}
-		# 	except PublicService.DoesNotExist, e:
-		# 		special = service
-				
-		# 		servicedata = {
-		# 			"id": special.pk,
-		# 			"type": "special",
-		# 		}
-
-		# data.update(servicedata)
-
-
-		if service.offeredservice is not None:
-			# offered service
-			data = OfferedServiceSerializer(service.offeredservice).data
+		try:
+			offered = service.offeredservice
+			# servicedata = {
+			# 	"id": offered.pk,
+			# 	"type": "offered",
+			# }
+			data = OfferedServiceSerializer(offered).data
 			newstuffhehe = {
 				'type': 'offered',
 				'provider': provider,
 				'seeker': seeker
 			}
-		elif service.publicservice is not None:
-			# public service
-			data = PublicServiceSerializer(service.publicservice).data
-			newstuffhehe = {
-				'type': 'public',
-				'provider': provider,
-				'seeker': seeker
-			}
-		else:
-			# special service
-			data = ServiceSerializer(service).data
-			newstuffhehe = {
-				'type': 'special',
-				'provider': provider,
-				'seeker': seeker
-			}
+		except OfferedService.DoesNotExist, e:
+			try:
+				public = service.publicservice
+				# servicedata = {
+				# 	"id": public.pk,
+				# 	"type": "public",
+				# }
+				data = PublicServiceSerializer(service.publicservice).data
+				newstuffhehe = {
+					'type': 'public',
+					'provider': provider,
+					'seeker': seeker
+				}
+			except PublicService.DoesNotExist, e:
+				special = service
+				# servicedata = {
+				# 	"id": special.pk,
+				# 	"type": "special",
+				# }
+				data = ServiceSerializer(service).data
+				newstuffhehe = {
+					'type': 'special',
+					'provider': provider,
+					'seeker': seeker
+				}
+
+		# data.update(servicedata)
+
+
+		# if service.offeredservice is not None:
+		# 	# offered service
+		# 	data = OfferedServiceSerializer(service.offeredservice).data
+		# 	newstuffhehe = {
+		# 		'type': 'offered',
+		# 		'provider': provider,
+		# 		'seeker': seeker
+		# 	}
+		# elif service.publicservice is not None:
+		# 	# public service
+		# 	data = PublicServiceSerializer(service.publicservice).data
+		# 	newstuffhehe = {
+		# 		'type': 'public',
+		# 		'provider': provider,
+		# 		'seeker': seeker
+		# 	}
+		# else:
+		# 	# special service
+		# 	data = ServiceSerializer(service).data
+		# 	newstuffhehe = {
+		# 		'type': 'special',
+		# 		'provider': provider,
+		# 		'seeker': seeker
+		# 	}
 
 
 		data.update(newstuffhehe)
