@@ -222,7 +222,7 @@ class ProviderResponseView(APIView):
 
 		service.save()
 
-		return Response(status=status.HTTP_200_OK)
+		return Response({"action":response}, status=status.HTTP_200_OK)
 
 	def _get_service(self, pk):
 		try:
