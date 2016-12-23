@@ -64,38 +64,67 @@ class ServiceLogSerializer(serializers.Serializer):
 		except User.DoesNotExist, e:
 			seeker = None
 
-		data = {
-			'title': service.title,
-			'status': service.status,
-			'created': service.created,
-			'due_date': service.due_date,
-			'provider': provider,
-			'seeker': seeker,
-		}
+		# data = {
+		# 	'title': service.title,
+		# 	'status': service.status,
+		# 	'created': service.created,
+		# 	'due_date': service.due_date,
+		# 	'provider': provider,
+		# 	'seeker': seeker,
+		# }
 
-		try:
-			offered = service.offeredservice
-			servicedata = {
-				"id": offered.pk,
-				"type": "offered",
+		# try:
+		# 	offered = service.offeredservice
+		# 	servicedata = {
+		# 		"id": offered.pk,
+		# 		"type": "offered",
+		# 	}
+		# except OfferedService.DoesNotExist, e:
+		# 	try:
+		# 		public = service.publicservice
+				
+		# 		servicedata = {
+		# 			"id": public.pk,
+		# 			"type": "public",
+		# 		}
+		# 	except PublicService.DoesNotExist, e:
+		# 		special = service
+				
+		# 		servicedata = {
+		# 			"id": special.pk,
+		# 			"type": "special",
+		# 		}
+
+		# data.update(servicedata)
+
+
+		if service.offeredservice is not None:
+			# offered service
+			data = OfferedServiceSerializer(service.offeredservice).data
+			newstuffhehe = {
+				'type': 'offered',
+				'provider': provider,
+				'seeker': seeker
 			}
-		except OfferedService.DoesNotExist, e:
-			try:
-				public = service.publicservice
-				
-				servicedata = {
-					"id": public.pk,
-					"type": "public",
-				}
-			except PublicService.DoesNotExist, e:
-				special = service
-				
-				servicedata = {
-					"id": special.pk,
-					"type": "special",
-				}
+		elif service.publicservice is not None:
+			# public service
+			data = PublicServiceSerializer(service.publicservice).data
+			newstuffhehe = {
+				'type': 'public',
+				'provider': provider,
+				'seeker': seeker
+			}
+		else:
+			# special service
+			data = ServiceSerializer(service).data
+			newstuffhehe = {
+				'type': 'special',
+				'provider': provider,
+				'seeker': seeker
+			}
 
-		data.update(servicedata)
+
+		data.update(newstuffhehe)
 		return data
 
 class BidSerializer(serializers.ModelSerializer):
