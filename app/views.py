@@ -194,7 +194,7 @@ class ProviderDoneView(APIView):
 
 	def _get_service(self, pk):
 		try:
-			return Service.objects.get(user__pk=pk)
+			return Service.objects.get(pk=pk)
 		except Service.DoesNotExist, e:
 			raise Http404
 
@@ -226,7 +226,7 @@ class ProviderResponseView(APIView):
 
 	def _get_service(self, pk):
 		try:
-			return Service.objects.get(user__pk=pk)
+			return Service.objects.get(pk=pk)
 		except Service.DoesNotExist, e:
 			raise Http404
 
