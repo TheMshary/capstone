@@ -186,11 +186,17 @@ class ProviderDoneView(APIView):
 
 	def post(self, request):
 		pk = request.data.get('pk')
-		service = Service.objects.get(pk=pk)
+		service = self._get_service(pk)
 		service.status = "Done"
 		service.save()
 
 		return Response(status=status.HTTP_200_OK)
+
+	def _get_service(self, pk):
+		try:
+			return Service.objects.get(user__pk=pk)
+		except Service.DoesNotExist, e:
+			raise Http404
 
 
 class ProviderResponseView(APIView):
@@ -203,7 +209,7 @@ class ProviderResponseView(APIView):
 
 	def post(self, request):
 		pk = request.data.get('pk')
-		service = Service.objects.get(pk=pk)
+		service = self._get_service(pk)
 		response = request.data.get("response")
 
 		if response == "accept":
@@ -217,6 +223,12 @@ class ProviderResponseView(APIView):
 		service.save()
 
 		return Response(status=status.HTTP_200_OK)
+
+	def _get_service(self, pk):
+		try:
+			return Service.objects.get(user__pk=pk)
+		except Service.DoesNotExist, e:
+			raise Http404
 
 
 class RequestView(APIView):
