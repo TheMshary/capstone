@@ -501,7 +501,7 @@ class PublicServiceView(APIView):
 
 			user = request.user
 			if user is not AnonymousUser:
-				bidon = Bid.objects.filter(bidder=user, publicservice__service__status="pending")
+				bidon = Bid.objects.filter(bidder=user, service__service__status="pending")
 				serviceserializer = PublicServiceProviderBidSerializer(bidon, many=True)
 
 				services = services.exclude(bid__in=Bid.objects.filter(bidder=user))
