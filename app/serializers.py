@@ -98,7 +98,7 @@ class ServiceLogSerializer(serializers.Serializer):
 					'provider': provider,
 					'seeker': seeker
 				}
-				data.update({'bid_set': [bid.update({"username":User.objects.get(pk=bid.bidder).username}) for bid in data.get('bid_set')]})
+				data.update({'bid_set': [bid.update({"username":User.objects.get(pk=bid.get('bidder')).username}) for bid in data.get('bid_set')]})
 			except PublicService.DoesNotExist, e:
 				special = service
 				# servicedata = {
