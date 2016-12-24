@@ -291,6 +291,8 @@ class ProfileSerializer(serializers.Serializer):
 		this function returns that JSON.
 		"""
 
+		done_count = len(Service.objects.filter(status="done", providerpk=profile.user.pk))
+		workingon_count = len(Service.objects.filter(status="active", providerpk=profile.user.pk))
 
 		data = {
 			"about": profile.about,
@@ -305,6 +307,8 @@ class ProfileSerializer(serializers.Serializer):
 			"username": profile.user.username,
 			"rate": profile.rating.rate,
 			"pk": profile.user.pk,
+			"done": done_count,
+			"workingon": workingon_count
 		}
 
 		return data
