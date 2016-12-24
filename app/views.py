@@ -90,6 +90,10 @@ class ProviderWorkingOnView(APIView):
 		specialserializer = ServiceSerializer(special, many=True)
 		publicserializer = PublicServiceSerializer(public, many=True)
 
+		[service.update({"seeker_username": User.objects.get(pk=service.get('service').get('seekerpk')).username}) for service in offeredserializer.data]
+		[service.update({"seeker_username": User.objects.get(pk=service.get('service').get('seekerpk')).username}) for service in publicserializer.data]
+		[service.update({"seeker_username": User.objects.get(pk=service.get('seekerpk')).username}) for service in specialserializer.data]
+
 		data = {
 			'special': specialserializer.data,
 			'offered': offeredserializer.data,
