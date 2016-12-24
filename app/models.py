@@ -184,6 +184,7 @@ class OfferedService(models.Model):
 	service = models.OneToOneField(Service, null=True)
 	category = models.CharField(max_length=1337, choices=CATEGORY_CHOICES, default=OTHER)
 	
+	day = models.CharField(max_length=1337, null=True, blank=True)
 	from_datetime = models.DateTimeField(null=True, blank=True)
 	to_datetime = models.DateTimeField(null=True, blank=True)
 	
