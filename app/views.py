@@ -152,7 +152,7 @@ class AcceptBidView(APIView):
 
 		# update service's price and status and providerpk
 		service.service.price = bid.bid
-		service.service.providerpk = bid.bidder
+		service.service.providerpk = bid.bidder.pk
 		service.service.status = "active"
 		service.service.save()
 		service.save()
