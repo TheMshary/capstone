@@ -119,6 +119,9 @@ class ProviderRequestsView(APIView):
 		offeredserializer = OfferedServiceSerializer(offered, many=True)
 		specialserializer = ServiceSerializer(special, many=True)
 
+		[service.update({"seeker_username": User.objects.get(pk=service.get('service').get('seekerpk')).username}) for service in offeredserializer.data]
+		[service.update({"seeker_username": User.objects.get(pk=service.get('seekerpk')).username}) for service in specialserializer.data]
+
 		data = {
 			'special': specialserializer.data,
 			'offered': offeredserializer.data,
