@@ -92,7 +92,8 @@ class ServiceLogSerializer(serializers.Serializer):
 				# 	"id": public.pk,
 				# 	"type": "public",
 				# }
-				data = PublicServiceSerializer(service.publicservice).data
+				public.bid_set[:] = [bid.update({"username":User.objects.get(pk=bid.bidder).username}) for bid in data.bid_set]
+				data = PublicServiceSerializer(public).data
 				newstuffhehe = {
 					'type': 'public',
 					'provider': provider,
