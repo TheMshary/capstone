@@ -341,7 +341,7 @@ class ProfileView(APIView):
 		profile = request.user.profile
 		data = request.data
 
-		serializer = ProfileSerializer(profile, data=data, context={"category":data.get("category")})
+		serializer = ProfileSerializer(profile, data=data, context={"category":data.get("category")}, partial=True)
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_200_OK)
@@ -527,9 +527,6 @@ class PublicServiceView(APIView):
 
 	@permission_classes((IsAuthenticated,))
 	def post(self, request):
-		# Do an if-statement to check if the service is suppose to be special.
-		# If it is, do the code block for a special service, may need a dedicated serializer for special services
-		# If not, then do the code block for a public service, it's already written below...
 		seekerpk = request.user.pk
 		data = request.data
 		data.get('service').update({"seekerpk": seekerpk})
