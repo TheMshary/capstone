@@ -109,7 +109,7 @@ class Service(models.Model):
 	description = models.TextField(default="No description available.")
 	price = models.FloatField(default=0.0)
 	status = models.CharField(max_length=100, choices=STATUS_CHOICES, null=True, blank=True, default=PENDING)
-	due_date = models.DateTimeField(null=True, blank=True)
+	due_date = models.CharField(max_length=1337, null=True, blank=True)
 	created = models.DateTimeField(auto_now_add=True)
 	seekerpk = models.IntegerField(null=True, blank=True)
 	providerpk = models.IntegerField(null=True, blank=True)
