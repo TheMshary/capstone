@@ -341,7 +341,7 @@ class ProfileView(APIView):
 		profile = request.user.profile
 		data = request.data
 
-		serializer = ProfileSerializer(profile, data=data, context={"category":data.get("category")}, partial=True)
+		serializer = ProfileSerializer(profile, data=data, context={"category":data.get("category")})
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_200_OK)
